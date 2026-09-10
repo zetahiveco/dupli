@@ -1,9 +1,11 @@
 import { auth } from "@clerk/nextjs/server"
+import { redirect } from "next/navigation"
 import { prisma } from "@/lib/db"
 
 export async function requireOrg() {
     const { userId, orgId } = await auth()
-    if (!userId || !orgId) throw new Error("Unauthorized")
+    if (!userId) redirect("/auth/login")
+    if (!orgId) redirect("/auth/create-org")
     return { userId, orgId }
 }
 

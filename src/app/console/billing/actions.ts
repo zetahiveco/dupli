@@ -2,6 +2,7 @@
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import DodoPayments from "dodopayments";
+import { requireOrg } from "@/services/auth";
 import { basePlanProductId, getBilling, getOrgUserCount, listOrgMembers } from "@/services/common/billing";
 
 export async function getCustomerPortalSession() {
@@ -10,11 +11,7 @@ export async function getCustomerPortalSession() {
         environment: process.env.NODE_ENV === "production" ? "live_mode" : "test_mode",
     });
 
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized");
-    }
+    const { userId, orgId } = await requireOrg();
 
     const billing = await getBilling(orgId, userId);
 
@@ -34,11 +31,7 @@ export async function getCustomerPortalSession() {
 }
 
 export async function checkoutPlan(plan = "BASE") {
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized");
-    }
+    const { userId, orgId } = await requireOrg();
 
     const billing = await getBilling(orgId, userId);
 
@@ -75,11 +68,8 @@ export async function checkoutPlan(plan = "BASE") {
 }
 
 export async function removeOrgMember(memberUserId: string) {
-    const { userId, orgId, orgRole } = await auth();
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized");
-    }
+    const { userId, orgId } = await requireOrg();
+    const { orgRole } = await auth();
 
     if (orgRole !== "org:admin") {
         throw new Error("Only organization admins can remove members");

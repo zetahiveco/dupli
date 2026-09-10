@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/db"
-import { auth } from "@clerk/nextjs/server"
+import { requireOrg } from "@/services/auth"
 import { Prisma } from "../../../../generated/prisma/client"
 import {
     CONNECT_INTEGRATION,
@@ -21,11 +21,7 @@ function toJson(value: unknown): Prisma.InputJsonValue {
 }
 
 export async function getOnboardingState() {
-    const { userId, orgId } = await auth()
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized")
-    }
+    const { userId, orgId } = await requireOrg()
 
     const [userSettings, organizationSettings, workspaceCount] = await Promise.all([
         prisma.userSettings.findUnique({ where: { userId } }),
@@ -63,11 +59,7 @@ export async function getOnboardingState() {
 }
 
 export async function completeOnboardingItem(item: string) {
-    const { userId, orgId } = await auth()
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized")
-    }
+    const { userId, orgId } = await requireOrg()
 
     const items = getChecklistItems()
     if (!items.includes(item)) {
@@ -100,11 +92,7 @@ export async function completeOnboardingItem(item: string) {
 }
 
 export async function skipSurvey() {
-    const { userId, orgId } = await auth()
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized")
-    }
+    const { userId, orgId } = await requireOrg()
 
     const payload = toJson({ skip: true })
 
@@ -118,11 +106,7 @@ export async function skipSurvey() {
 }
 
 export async function submitSurvey(answers: Record<string, SurveyAnswer>) {
-    const { userId, orgId } = await auth()
-
-    if (!userId || !orgId) {
-        throw new Error("Unauthorized")
-    }
+    const { userId, orgId } = await requireOrg()
 
     const questions = getSurveyQuestions()
     const allowed = new Set(questions.map((question) => question.question))

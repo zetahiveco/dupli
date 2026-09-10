@@ -1,6 +1,14 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+const isConsoleRoute = createRouteMatcher(["/console(.*)"]);
+
+export default clerkMiddleware(async (auth, req) => {
+    if (isConsoleRoute(req)) {
+        await auth.protect({
+            unauthenticatedUrl: new URL("/auth/login", req.url).href,
+        });
+    }
+});
 
 export const config = {
   matcher: [

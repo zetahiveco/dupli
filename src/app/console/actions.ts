@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/db"
 import { getBilling, listOrgMembers } from "@/services/common/billing"
+import { requireOrg } from "@/services/auth"
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import DodoPayments from 'dodopayments';
 
@@ -129,11 +130,8 @@ export async function onboardApp() {
 }
 
 export async function fetchBilling() {
-    const { orgId, userId, orgRole } = await auth()
-
-    if (!orgId || !userId) {
-        throw new Error("Unauthorized")
-    }
+    const { orgId, userId } = await requireOrg()
+    const { orgRole } = await auth()
 
     const billing = await getBilling(orgId, userId)
     if (!billing) return null

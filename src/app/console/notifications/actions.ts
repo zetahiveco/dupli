@@ -1,10 +1,9 @@
 "use server"
 
-import { auth } from "@clerk/nextjs/server"
+import { requireOrg } from "@/services/auth"
 
 export async function getNotifications() {
-    const { userId, orgId } = await auth()
-    if (!userId || !orgId) throw new Error("Unauthorized")
+    await requireOrg()
     return [] as Array<{ id: string; title: string; body?: string; isRead: boolean; createdAt: Date }>
 }
 
