@@ -344,7 +344,7 @@ export async function getBilling(organizationId: string, userId?: string) {
 
     return {
         ...billing,
-        plan: billing.plan === "STARTER" ? "BASE" : billing.plan,
+        plan: billing.plan === "BASE_PLAN" ? "BASE" : billing.plan,
         minutesResetAt,
         clerkUserCount,
         seatsRemaining,
@@ -359,5 +359,5 @@ export async function getBilling(organizationId: string, userId?: string) {
 export type BillingWithTotals = NonNullable<Awaited<ReturnType<typeof getBilling>>>
 
 export function basePlanProductId() {
-    return process.env.DODO_BASE_PLAN || process.env.DODO_STARTER_PLAN || ""
+    return process.env.DODO_BASE_PLAN || ""
 }

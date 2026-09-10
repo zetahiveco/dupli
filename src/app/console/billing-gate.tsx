@@ -146,7 +146,7 @@ export default function BillingGate() {
                             </div>
                         ))}
                     </div>
-                    <Plans disableStarter={paid} />
+                    <Plans alreadyPaid={paid} />
                 </div>
             </BlockingDialog>
         )
@@ -167,7 +167,7 @@ export default function BillingGate() {
                     <Button variant="outline" onClick={() => router.push("/console/billing")}>
                         View billing
                     </Button>
-                    <Plans disableStarter={paid} />
+                    <Plans alreadyPaid={paid} />
                 </div>
             </BlockingDialog>
         )

@@ -41,10 +41,10 @@ function FeatureBullet({ children }: { children: React.ReactNode }) {
 }
 
 type PlansProps = {
-    disableStarter?: boolean
+    alreadyPaid?: boolean
 }
 
-export default function Plans({ disableStarter = false }: PlansProps) {
+export default function Plans({ alreadyPaid = false }: PlansProps) {
     const router = useRouter()
     const { userId, orgId } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
@@ -90,12 +90,12 @@ export default function Plans({ disableStarter = false }: PlansProps) {
                     <Button
                         size="lg"
                         className="w-full bg-brand text-white hover:bg-brand/90"
-                        disabled={isLoading || disableStarter}
+                        disabled={isLoading || alreadyPaid}
                         onClick={() => handleGetStarted("BASE")}
                     >
                         {isLoading ? <PiSpinner className="animate-spin" /> : "Get started"}
                     </Button>
-                    {disableStarter && (
+                    {alreadyPaid && (
                         <p className="mt-2 text-xs text-muted-foreground">
                             You&apos;re already on a paid plan. Talk to us for volume minutes.
                         </p>

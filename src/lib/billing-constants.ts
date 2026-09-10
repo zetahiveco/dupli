@@ -9,7 +9,7 @@ export const MINUTE_BREAKDOWN = [
 ] as const
 
 export function isPaidPlan(plan: string, isActive: boolean) {
-    return Boolean(isActive) && (plan === "BASE" || plan === "STARTER" || plan === "CUSTOM")
+    return Boolean(isActive) && (plan === "BASE" || plan === "BASE_PLAN" || plan === "CUSTOM")
 }
 
 export function isInsufficientMinutesMessage(message: string) {
