@@ -172,7 +172,7 @@ export default function SurveyDialog({
             >
                 <DialogTitle className="sr-only">Welcome survey</DialogTitle>
                 <DialogDescription className="sr-only">
-                    A short survey to help us understand how you plan to use Monial.
+                    A short survey to help us understand how you plan to use Dupli.
                 </DialogDescription>
 
                 <div className="flex items-center gap-4 border-b px-6 py-4">
@@ -187,7 +187,7 @@ export default function SurveyDialog({
                         {done ? (
                             <div className="space-y-3">
                                 <p className="text-sm font-medium text-muted-foreground">You&apos;re in</p>
-                                <h2 className="text-4xl font-semibold tracking-tight">Thanks — we&apos;ll use this to improve Monial.</h2>
+                                <h2 className="text-4xl font-semibold tracking-tight">Thanks — we&apos;ll use this to improve Dupli.</h2>
                             </div>
                         ) : question ? (
                             <div className="space-y-8">
