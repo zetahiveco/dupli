@@ -1,0 +1,5 @@
+const fs = require("fs")
+const path = require("path")
+const text = fs.readFileSync(path.join(__dirname, "..", "slack-manifest.yaml"), "utf8")
+const { parse } = require("yaml")
+process.stdout.write(JSON.stringify(parse(text)))

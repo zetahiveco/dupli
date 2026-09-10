@@ -1,0 +1,146 @@
+.dupli-shepherd.shepherd-element {
+  background: color-mix(in oklch, var(--popover) 90%, transparent);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: none;
+  backdrop-filter: blur(24px);
+  font-family: inherit;
+  max-width: 22rem;
+}
+
+.dupli-shepherd .shepherd-content,
+.dupli-shepherd .shepherd-header,
+.dupli-shepherd .shepherd-footer {
+  border-radius: var(--radius);
+  background: transparent;
+}
+
+.dupli-shepherd.shepherd-has-title .shepherd-content .shepherd-header {
+  background: transparent;
+  padding: 1rem 1rem 0;
+  line-height: 1.25;
+}
+
+.dupli-shepherd .shepherd-title {
+  color: var(--popover-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.dupli-shepherd .shepherd-text {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  padding: 0.5rem 1rem 0.75rem;
+}
+
+.dupli-shepherd .shepherd-text p {
+  margin: 0;
+}
+
+.dupli-shepherd-progress {
+  margin: 0.5rem 0 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.dupli-shepherd .shepherd-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0 1rem 1rem;
+}
+
+.dupli-shepherd .shepherd-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  margin: 0;
+  padding: 0 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.dupli-shepherd .shepherd-button:not(:disabled):hover {
+  background: color-mix(in oklch, var(--primary) 90%, transparent);
+  color: var(--primary-foreground);
+}
+
+.dupli-shepherd .shepherd-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+.dupli-shepherd .shepherd-button:active {
+  transform: scale(0.97);
+}
+
+.dupli-shepherd .shepherd-button.shepherd-button-secondary {
+  background: color-mix(in oklch, var(--background) 80%, transparent);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.dupli-shepherd .shepherd-button.shepherd-button-secondary:not(:disabled):hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.dupli-shepherd .shepherd-button.shepherd-button-ghost {
+  margin-right: auto;
+  background: transparent;
+  color: var(--foreground);
+  border-color: transparent;
+}
+
+.dupli-shepherd .shepherd-button.shepherd-button-ghost:not(:disabled):hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.dupli-shepherd .shepherd-cancel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--muted-foreground);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.dupli-shepherd .shepherd-cancel-icon:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  opacity: 1;
+}
+
+.dupli-shepherd .shepherd-arrow:before {
+  background: color-mix(in oklch, var(--popover) 90%, transparent);
+  border: 1px solid var(--border);
+}
+
+.dupli-shepherd.shepherd-has-title[data-popper-placement^="bottom"] > .shepherd-arrow:before {
+  background-color: color-mix(in oklch, var(--popover) 90%, transparent);
+}
+
+.shepherd-modal-overlay-container.shepherd-modal-is-visible {
+  opacity: 0.5;
+}

@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "next/navigation": [
+        "./node_modules/next/dist/client/components/navigation"
+      ],
+      "next/navigation.js": [
+        "./node_modules/next/dist/client/components/navigation"
+      ]
+    }
+  },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.d.ts",
+        ".next/types/**/*.ts",
+        "tsup.config.ts",
+        "esbuild.config.mjs",
+        ".next/dev/types/**/*.ts",
+        "trigger.config.ts"
+    ],
+  "exclude": [
+    "node_modules"
+  ]
+}

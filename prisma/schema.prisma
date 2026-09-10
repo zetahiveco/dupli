@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Harness {
+  CLAUDE_CODEX
+  OPENAI_CODEX
+  GEMINI_CLI
+  DEEPSEEK_HARNESS
+  FX
+  KIMI_CODE
+  OPENCODE
+  MUSE_CODE
+  PI
+}
+
+enum AutomationTrigger {
+  VIA_WEBHOOK
+  VIA_CRON
+  VIA_API
+  VIA_GITHUB
+  VIA_GITLAB
+  VIA_BITBUCKET
+  VIA_LINEAR
+  VIA_SLACK
+  VIA_SENTRY
+}
+
+enum AutomationWorkspace {
+  USE_EXISTING
+  CREATE_NEW
+}
+
+model UserSettings {
+  userId               String    @id
+  organizationId       String    @default("")
+  onboarding           Json      @default("{}")
+  environmentVariables Json      @default("{}")
+  safeId               String    @default(uuid())
+  minutesUsed          Int       @default(0)
+  minutesResetAt       DateTime?
+  minuteCursors        Json      @default("{}")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now()) @updatedAt
+}
+
+model OrganizationSettings {
+  organizationId       String   @id
+  surveryResponse      Json     @default("{}") // { "answers": { }, "skip": true [dont repeat] }
+  webhookUrl           String?
+  emailNotify          Boolean  @default(true)
+  environmentVariables Json     @default("{}")
+  integrationsConfig   Json     @default("{}")
+  safeId               String   @default(uuid())
+  apiKey               String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now()) @updatedAt
+}
+
+model Billing {
+  organizationId String    @id
+  thirdPartyId   String?
+  subscriptionId String?
+  plan           String    @default("NO_PLAN")
+  maxUsers       Int       @default(1)
+  expiresAt      DateTime?
+  minutesResetAt DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+}
+
+model ApiKey {
+  id               String   @id
+  organizationId   String
+  harness          Harness
+  apiKey           String
+  additionalConfig Json?    @default("{}") // { "provider": "fireworks-ai"} // Like PI, OpenCode where multiple providers are used
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+}
+
+model Workspace {
+  id             String       @id
+  userId         String
+  organizationId String
+  name           String?
+  harness        Harness
+  sandboxId      String?
+  messages       Json         @default("[]")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  automations    Automation[]
+}
+
+model Automation {
+  id                 String              @id
+  organizationId     String
+  userId             String
+  integrationConfig  Json?               @default("{}")
+  trigger            AutomationTrigger
+  workspaceAction    AutomationWorkspace
+  name               String
+  prompt             String
+  workspaceId        String?
+  workspace          Workspace?          @relation(fields: [workspaceId], references: [id])
+  newWorkspaceConfig Json?               @default("{}") // { "name": "string", "harness": "string", api_key: "" }
+  cron               String? // 
+  isRunning          Boolean             @default(false)
+  nextRunAt          DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
+}
+
+model WebhookLogItem {
+  id             String   @id @default(uuid())
+  organizationId String
+  url            String
+  status         Int
+  request        Json
+  response       Json
+  comments       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+}

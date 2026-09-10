@@ -1,0 +1,22 @@
+questions:
+  - question: How did you hear about us?
+    select_type: single
+    options:
+      - Google
+      - ChatGPT / Claude
+      - LinkedIn
+      - Other (Please specify)
+
+  - question: How do you plan to use Dupli?
+    select_type: multiple
+    options:
+      - Cloud workspaces
+      - Automations
+      - API
+
+  - question: Which harnesses do you already use?
+    select_type: multiple
+    options:
+      - Claude Code
+      - Codex
+      - Other (Please Specify)

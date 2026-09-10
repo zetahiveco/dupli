@@ -1,0 +1,75 @@
+_metadata:
+  major_version: 2
+  minor_version: 1
+
+display_information:
+  name: Dupli
+  description: Slash commands for cloud coding workspaces and automations.
+  background_color: "#FF8437"
+  long_description: >
+    Dupli runs coding agents inside isolated cloud machines. Use slash
+    commands to create and choose workspaces, send a task with /workspace-chat,
+    and create, edit, or delete automations. Type /dupli to open Workspace
+    and Actions. Replies land in the channel where you ran the command.
+
+features:
+  bot_user:
+    display_name: Dupli
+    always_online: true
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: false
+    messages_tab_read_only_enabled: true
+  slash_commands:
+    - command: /dupli
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Show Workspace and Actions options
+      usage_hint: "[create workspace | choose | chat | actions]"
+      should_escape: false
+    - command: /workspace-create
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Workspace create
+      usage_hint: "[name]"
+      should_escape: false
+    - command: /workspace-choose
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Workspace choose
+      should_escape: false
+    - command: /workspace-chat
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Send a task to the selected workspace
+      usage_hint: "[task]"
+      should_escape: false
+    - command: /action-create
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Actions create
+      usage_hint: "[prompt]"
+      should_escape: false
+    - command: /action-edit
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Actions edit
+      usage_hint: "[prompt]"
+      should_escape: false
+    - command: /action-delete
+      url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
+      description: Actions delete
+      should_escape: false
+
+oauth_config:
+  redirect_urls:
+    - https://api.nango.dev/oauth/callback
+  scopes:
+    bot:
+      - commands
+      - chat:write
+      - chat:write.public
+      - im:write
+      - users:read
+
+settings:
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
+  interactivity:
+    is_enabled: true
+    request_url: https://api.nango.dev/webhook/a4b3d658-9900-4524-82cd-05880081ef9b/slack
