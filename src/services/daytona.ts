@@ -231,7 +231,7 @@ export async function commitSandboxPath(sandboxId: string, relPath: string) {
     const quoted = shellQuote(path)
     await runInSandbox({
         sandboxId,
-        command: `git add -- ${quoted} && git -c commit.gpgsign=false commit -m ${shellQuote(`keep ${path}`)} || true`,
+        command: `git config user.email 'workspace@dupli.dev' && git config user.name 'Dupli' && git add -- ${quoted} && git -c commit.gpgsign=false commit -m ${shellQuote(`keep ${path}`)} || true`,
         timeout: 20,
     })
 }

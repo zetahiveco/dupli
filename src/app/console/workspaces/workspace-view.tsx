@@ -422,12 +422,15 @@ export default function WorkspaceView({ workspaceId }: { workspaceId: string }) 
                                         path={activeTab}
                                         patch={changes.find((file) => file.path === activeTab)?.patch}
                                         extra={changes.find((file) => file.path === activeTab)?.extra}
+                                        pendingChange={changes.some((file) => file.path === activeTab)}
                                         diffMode={Boolean(diffModeByPath[activeTab])}
                                         onDiffMode={(next) => setDiffModeByPath((prev) => ({ ...prev, [activeTab]: next }))}
                                         onSaved={() => void refreshFiles()}
-                                        onResolved={() => {
+                                        onResolved={(result) => {
+                                            setChanges((prev) => prev.filter((file) => file.path !== activeTab))
+                                            setDiffModeByPath((prev) => ({ ...prev, [activeTab]: false }))
+                                            if (result.deleted) closeFileTab(activeTab)
                                             void load()
-                                            closeFileTab(activeTab)
                                         }}
                                     />
                                 </div>

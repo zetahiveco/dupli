@@ -93,6 +93,7 @@ export default function FileEditor({
     path,
     patch,
     extra,
+    pendingChange = false,
     diffMode = false,
     onDiffMode,
     onSaved,
@@ -102,6 +103,7 @@ export default function FileEditor({
     path: string
     patch?: string
     extra?: string
+    pendingChange?: boolean
     diffMode?: boolean
     onDiffMode?: (next: boolean) => void
     onSaved?: () => void
@@ -142,6 +144,10 @@ export default function FileEditor({
     }, [workspaceId, path])
 
     useEffect(() => {
+        if (!pendingChange) {
+            setLivePatch("")
+            return
+        }
         let cancelled = false
         void (async () => {
             try {
@@ -154,10 +160,10 @@ export default function FileEditor({
         return () => {
             cancelled = true
         }
-    }, [workspaceId, path, patch])
+    }, [workspaceId, path, patch, pendingChange])
 
     const shownPatch = livePatch || patch || ""
-    const canDiff = Boolean(shownPatch) && !dismissed
+    const canDiff = pendingChange && Boolean(shownPatch) && !dismissed
     const viewingDiff = Boolean(diffMode && canDiff)
 
     const save = async () => {

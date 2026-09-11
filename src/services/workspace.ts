@@ -297,17 +297,15 @@ function conversationFollowUp(messages: ChatMessage[], latest: string) {
 }
 
 function mergeChanges(live: FileChange[], fromMessages: FileChange[]) {
-    const byPath = new Map<string, FileChange>()
-    for (const file of fromMessages) byPath.set(file.path, file)
-    for (const file of live) {
-        const prev = byPath.get(file.path)
-        byPath.set(file.path, {
+    const liveByPath = new Map(live.map((file) => [file.path, file]))
+    return fromMessages.map((file) => {
+        const current = liveByPath.get(file.path)
+        return {
             path: file.path,
-            extra: file.extra || prev?.extra,
-            patch: prev?.patch || file.patch,
-        })
-    }
-    return [...byPath.values()]
+            extra: current?.extra || file.extra,
+            patch: file.patch || current?.patch,
+        }
+    })
 }
 
 async function collectWorkspaceChanges(workspace: WorkspaceRecord): Promise<FileChange[]> {
