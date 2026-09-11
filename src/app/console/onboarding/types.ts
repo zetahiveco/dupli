@@ -1,9 +1,10 @@
 export const CREATE_WORKSPACE = "Create a workspace"
-export const CREATE_API_KEY = "Create a API Key"
+export const CREATE_API_KEY = "Generate a REST API key"
 export const CONNECT_INTEGRATION = "Connect an integration"
-export const EXPLORE_DATABASE = CREATE_WORKSPACE
-export const CONNECT_MCP = CONNECT_INTEGRATION
-export const DATABASE_TOUR_EVENT = "dupli:start-workspace-tour"
+export const TAKE_TOUR = "Take a product tour"
+
+export const NEW_WORKSPACE_EVENT = "dupli:new-workspace"
+export const PRODUCT_TOUR_EVENT = "dupli:start-product-tour"
 
 export type SurveyQuestion = {
     question: string

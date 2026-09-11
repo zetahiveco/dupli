@@ -299,6 +299,7 @@ export default function WorkspaceView({ workspaceId }: { workspaceId: string }) 
                                             activeTab === BROWSER_TAB ? "border-b-2 border-brand text-brand" : "text-white/45 hover:text-white/80",
                                         )}
                                         onClick={() => setActiveTab(BROWSER_TAB)}
+                                        data-tour="browser"
                                     >
                                         <Globe className="h-3 w-3" />
                                         Browser
@@ -350,12 +351,12 @@ export default function WorkspaceView({ workspaceId }: { workspaceId: string }) 
                                     )}
                                 </div>
                             </div>
-                            <div className="shrink-0 border-t border-white/10 p-3">
+                            <div className="shrink-0 border-t border-white/10 p-3" data-tour="chat">
                                 <div className="flex flex-col border border-white/10 bg-white/3">
                                     <textarea
                                         value={draft}
                                         onChange={(e) => setDraft(e.target.value)}
-                                        placeholder={`Ask ${harnessName(workspace.harness)} to help with coding tasks…`}
+                                        placeholder={`Try: “Add a failing test for checkout, then make it pass.”`}
                                         className="min-h-24 w-full resize-none bg-transparent px-3 pt-2.5 pb-1 text-sm text-white outline-none placeholder:text-white/35"
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter" && !e.shiftKey) {
@@ -441,7 +442,7 @@ export default function WorkspaceView({ workspaceId }: { workspaceId: string }) 
                     <ResizablePanel defaultSize={32} minSize={22}>
                         <ResizablePanelGroup direction="vertical">
                             <ResizablePanel defaultSize={28} minSize={16}>
-                                <div className="flex h-full min-h-0 flex-col">
+                                <div className="flex h-full min-h-0 flex-col" data-tour="changes">
                                     <div className="flex h-9 items-center justify-between gap-2 border-b border-white/10 px-2">
                                         <span className="shrink-0 text-xs font-medium text-white/70">
                                             <GitBranch className="mr-1 inline h-3 w-3" />

@@ -1,22 +1,29 @@
 questions:
-  - question: How did you hear about us?
+  - question: How did you hear about Dupli?
     select_type: single
     options:
       - Google
       - ChatGPT / Claude
-      - LinkedIn
+      - Twitter / X
+      - A teammate
       - Other (Please specify)
 
-  - question: How do you plan to use Dupli?
+  - question: What do you want Dupli to do first?
     select_type: multiple
     options:
-      - Cloud workspaces
-      - Automations
-      - API
+      - Run coding agents in isolated VMs
+      - Turn GitHub or Linear tickets into runs
+      - Trigger work from Slack
+      - Call the REST API
+      - Other (Please specify)
 
   - question: Which harnesses do you already use?
     select_type: multiple
     options:
       - Claude Code
       - Codex
-      - Other (Please Specify)
+      - Gemini CLI
+      - DeepSeek Harness
+      - opencode
+      - None yet
+      - Other (Please specify)

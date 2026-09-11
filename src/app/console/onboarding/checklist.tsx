@@ -7,7 +7,14 @@ import { CircularProgress } from "@/components/ui/circular-progress"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { CONNECT_INTEGRATION, CREATE_API_KEY, CREATE_WORKSPACE } from "./types"
+import {
+    CONNECT_INTEGRATION,
+    CREATE_API_KEY,
+    CREATE_WORKSPACE,
+    NEW_WORKSPACE_EVENT,
+    PRODUCT_TOUR_EVENT,
+    TAKE_TOUR,
+} from "./types"
 import { useOnboarding } from "./provider"
 
 export default function OnboardingChecklist() {
@@ -24,7 +31,10 @@ export default function OnboardingChecklist() {
         setOpen(false)
 
         if (item === CREATE_WORKSPACE) {
-            router.push("/console/workspaces")
+            window.dispatchEvent(new Event(NEW_WORKSPACE_EVENT))
+            if (!pathname.startsWith("/console/workspaces")) {
+                router.push("/console/workspaces")
+            }
             return
         }
 
@@ -39,6 +49,15 @@ export default function OnboardingChecklist() {
 
         if (item === CONNECT_INTEGRATION) {
             router.push("/console/integrations")
+            return
+        }
+
+        if (item === TAKE_TOUR) {
+            if (!pathname.startsWith("/console/workspaces")) {
+                router.push("/console/workspaces?tour=1")
+                return
+            }
+            window.dispatchEvent(new Event(PRODUCT_TOUR_EVENT))
         }
     }
 
@@ -73,7 +92,7 @@ export default function OnboardingChecklist() {
             </Tooltip>
             <PopoverContent side="right" align="end" sideOffset={12} className="w-72 p-0">
                 <div className="px-4 py-3 border-b border-slate-200/90">
-                    <p className="text-sm font-semibold">Getting started</p>
+                    <p className="text-sm font-semibold">Getting started with Dupli</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                         {doneCount} of {items.length} complete
                     </p>

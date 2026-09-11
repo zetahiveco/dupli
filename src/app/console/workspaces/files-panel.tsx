@@ -154,7 +154,7 @@ export default function FilesPanel({
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col">
+        <div className="flex h-full min-h-0 flex-col" data-tour="files">
             <div className="flex h-9 items-center justify-between border-b border-white/10 px-3">
                 <span className="text-xs font-medium text-white/70">Files</span>
                 <div className="flex items-center gap-1">

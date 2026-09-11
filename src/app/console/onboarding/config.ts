@@ -8,6 +8,7 @@ export {
     CONNECT_INTEGRATION,
     CREATE_API_KEY,
     CREATE_WORKSPACE,
+    TAKE_TOUR,
 } from "./types"
 export type {
     OnboardingData,

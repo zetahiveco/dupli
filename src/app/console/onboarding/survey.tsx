@@ -187,7 +187,7 @@ export default function SurveyDialog({
                         {done ? (
                             <div className="space-y-3">
                                 <p className="text-sm font-medium text-muted-foreground">You&apos;re in</p>
-                                <h2 className="text-4xl font-semibold tracking-tight">Thanks — we&apos;ll use this to improve Dupli.</h2>
+                                <h2 className="text-4xl font-semibold tracking-tight">Next, spin up a workspace and give the agent a small, real task.</h2>
                             </div>
                         ) : question ? (
                             <div className="space-y-8">

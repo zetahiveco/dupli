@@ -15,7 +15,7 @@ function useCalEmbed() {
       cal("ui", { hideEventTypeDetails: false, layout: "month_view" })
     })()
   }, [])
-}
+} 
 
 type BookDemoButtonProps = ComponentProps<typeof Button>
 

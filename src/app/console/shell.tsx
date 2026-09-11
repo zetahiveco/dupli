@@ -23,6 +23,8 @@ import { HarnessLogo } from "@/components/shared/harness-logo"
 import { listOrgWorkspaces, type SidebarWorkspace } from "./workspaces/actions"
 import NewWorkspaceDialog from "./workspaces/new-dialog"
 import OnboardingChecklist from "./onboarding/checklist"
+import ConsoleTour from "./onboarding/tour"
+import { NEW_WORKSPACE_EVENT } from "./onboarding/types"
 
 const nav = [
     { href: "/console/environments", label: "Environments", icon: Boxes },
@@ -58,6 +60,12 @@ export default function ConsoleShell({ children }: { children: React.ReactNode }
         void load()
     }, [pathname])
 
+    useEffect(() => {
+        const openNew = () => setNewOpen(true)
+        window.addEventListener(NEW_WORKSPACE_EVENT, openNew)
+        return () => window.removeEventListener(NEW_WORKSPACE_EVENT, openNew)
+    }, [])
+
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase()
         if (!q) return workspaces
@@ -87,6 +95,7 @@ export default function ConsoleShell({ children }: { children: React.ReactNode }
                         className="h-7 w-7 text-white/70 hover:bg-white/8 hover:text-brand"
                         onClick={() => setNewOpen(true)}
                         aria-label="New workspace"
+                        data-tour="new-workspace"
                     >
                         <Plus className="h-4 w-4" />
                     </Button>
@@ -107,10 +116,17 @@ export default function ConsoleShell({ children }: { children: React.ReactNode }
                 <nav className="space-y-0.5 px-2">
                     {nav.map((item) => {
                         const active = pathname.startsWith(item.href)
+                        const tourId =
+                            item.href === "/console/automations"
+                                ? "automations"
+                                : item.href === "/console/integrations"
+                                    ? "integrations"
+                                    : undefined
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
+                                data-tour={tourId}
                                 className={cn(
                                     "flex items-center gap-2 rounded-none px-2.5 py-1.5 text-[13px] transition-colors",
                                     active
@@ -125,7 +141,7 @@ export default function ConsoleShell({ children }: { children: React.ReactNode }
                     })}
                 </nav>
 
-                <div className="mt-4 min-h-0 flex-1 overflow-y-auto px-2 pb-3">
+                <div className="mt-4 min-h-0 flex-1 overflow-y-auto px-2 pb-3" data-tour="workspaces">
                     <p className="px-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
                         All workspaces
                     </p>
@@ -171,6 +187,7 @@ export default function ConsoleShell({ children }: { children: React.ReactNode }
                 {children}
             </div>
             <Toaster />
+            <ConsoleTour />
             <NewWorkspaceDialog
                 open={newOpen}
                 onOpenChange={setNewOpen}

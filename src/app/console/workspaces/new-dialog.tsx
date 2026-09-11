@@ -93,7 +93,7 @@ export default function NewWorkspaceDialog({
                 <div className="space-y-5">
                     <div className="space-y-2">
                         <Label>Name</Label>
-                        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Show file provenance…" />
+                        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Fix the flaky checkout test…" />
                     </div>
                     <div className="space-y-2">
                         <Label>Harness</Label>
