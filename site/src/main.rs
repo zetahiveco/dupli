@@ -157,7 +157,7 @@ fn landing() -> String {
   <div class="card"><h3>Sessions</h3><p>Every conversation is saved as a tree-friendly JSON file. Resume with <code>-c</code> or <code>--session</code>, or rewind with <code>/navigate</code>.</p></div>
   <div class="card"><h3>Themes</h3><p>Six built-in color themes, switchable live with <code>/theme</code>. Dracula, Nord, Solarized, Everforest and friends.</p></div>
   <div class="card"><h3>Skills</h3><p>Drop a <code>SKILL.md</code> in <code>.dupli/skills/</code> and the agent loads your playbook on demand — progressive disclosure, no prompt bloat.</p></div>
-  <div class="card"><h3>Things Pi doesn't have</h3><p>Own LSP diagnostics, undo/redo for every file write, session diffing with <code>/diff</code>, and a web UI via axum + leptos.</p></div>
+  <div class="card"><h3>Things Pi doesn't have</h3><p>Own LSP diagnostics, undo/redo for every file write, session diffing with <code>/diff</code>, and a web UI where even the frontend is Rust (leptos → WebAssembly).</p></div>
 </section>
 <section class="term">
 <pre><code><span class="p">$</span> dupli --sandbox

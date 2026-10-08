@@ -10,7 +10,7 @@ name = "dupli"
 path = "src/main.rs"
 
 [workspace]
-members = ["site"]
+members = ["site", "web-client"]
 resolver = "2"
 
 [dependencies]
@@ -24,7 +24,6 @@ rustyline = "14"
 similar = "2"
 dirs = "5"
 axum = { version = "0.7", features = ["json"] }
-leptos = { version = "0.6", features = ["ssr"] }
 futures = "0.3"
 tokio-stream = "0.1"
 base64 = "0.22"

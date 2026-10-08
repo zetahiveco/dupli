@@ -261,6 +261,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "const_format"
 version = "0.2.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -409,7 +419,6 @@ dependencies = [
  "dirs",
  "futures",
  "futures-util",
- "leptos",
  "reqwest",
  "rustyline",
  "serde",
@@ -425,6 +434,20 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "pulldown-cmark",
+]
+
+[[package]]
+name = "dupli-web-client"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "js-sys",
+ "leptos",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]
@@ -1066,6 +1089,7 @@ dependencies = [
  "tracing",
  "typed-builder",
  "typed-builder-macro",
+ "wasm-bindgen",
  "web-sys",
 ]
 
@@ -1163,6 +1187,7 @@ dependencies = [
  "cfg-if",
  "futures",
  "indexmap",
+ "js-sys",
  "oco_ref",
  "paste",
  "pin-project",
@@ -1173,9 +1198,10 @@ dependencies = [
  "serde_json",
  "slotmap",
  "thiserror 1.0.69",
- "tokio",
  "tracing",
+ "wasm-bindgen",
  "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]
@@ -2143,7 +2169,6 @@ dependencies = [
  "futures",
  "gloo-net",
  "http",
- "inventory",
  "js-sys",
  "once_cell",
  "send_wrapper",

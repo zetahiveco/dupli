@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dupli — web ui</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="icon" href="data:," />
+</head>
+<body>
+  <!-- The entire UI is the leptos app, mounted by the WASM module below. -->
+  <script type="module">
+    import init from '/assets/pkg/dupli_web_client.js';
+    init();
+  </script>
+</body>
+</html>

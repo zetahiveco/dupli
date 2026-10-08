@@ -1,8 +1,9 @@
 # Web UI
 
-Dupli ships a web interface served by [axum](https://github.com/tokio-rs/axum)
-and rendered with [leptos](https://leptos.dev) (SSR). It's the same agent
-core as the TUI — sessions, tools, approval rules and all.
+Dupli ships a web interface served by [axum](https://github.com/tokio-rs/axum).
+The UI itself is a [leptos](https://leptos.dev) app (`web-client/`) compiled
+to WebAssembly — there is no handwritten JavaScript anywhere in the repo.
+It's the same agent core as the TUI — sessions, tools, approval rules and all.
 
 ## Run
 
@@ -30,7 +31,7 @@ The UI is a thin layer over a small API, in case you want to script it:
 
 | Route | Method | Description |
 | --- | --- | --- |
-| `/` | GET | The leptos-rendered app shell |
+| `/` | GET | HTML loader that boots the leptos WASM app |
 | `/api/chat` | POST | Send `{ "message": "..." }`, receive an SSE stream |
 | `/api/sessions` | GET | List saved sessions |
 | `/api/session/:id` | GET | One session's full message history |
@@ -39,3 +40,17 @@ The UI is a thin layer over a small API, in case you want to script it:
 
 The server binds to `127.0.0.1` only. It doesn't authenticate — don't
 expose it to the network without putting something in front of it.
+
+## Hacking on the UI
+
+The frontend lives in `web-client/` (leptos, client-side rendered). After
+changing it, rebuild the WebAssembly assets the server embeds:
+
+```sh
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli
+./scripts/build-web.sh
+```
+
+This regenerates `src/web/assets/pkg/`, which `cargo build` bakes into
+the `dupli` binary.

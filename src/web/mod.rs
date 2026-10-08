@@ -1,11 +1,9 @@
-mod ui;
-
 use crate::agent::Agent;
 use crate::report::{Reporter, WebReporter};
 use anyhow::Result;
 use axum::extract::State;
 use axum::response::sse::{Event, KeepAlive, Sse};
-use axum::response::{Html, IntoResponse};
+use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use futures::StreamExt;
@@ -15,8 +13,12 @@ use std::convert::Infallible;
 use std::sync::Arc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
+// The UI itself is the leptos app in ../web-client, compiled to WebAssembly.
+// The server only ships these prebuilt assets and speaks the JSON/SSE API.
+const INDEX_HTML: &str = include_str!("assets/index.html");
 const STYLE_CSS: &str = include_str!("assets/style.css");
-const CHAT_JS: &str = include_str!("assets/chat.js");
+const CLIENT_JS: &[u8] = include_bytes!("assets/pkg/dupli_web_client.js");
+const CLIENT_WASM: &[u8] = include_bytes!("assets/pkg/dupli_web_client_bg.wasm");
 
 struct AppState {
     agent: tokio::sync::Mutex<Agent>,
@@ -30,8 +32,9 @@ pub async fn serve(agent: Agent, port: u16) -> Result<()> {
 
     let app = Router::new()
         .route("/", get(index))
-        .route("/assets/style.css", get(|| async { css_response() }))
-        .route("/assets/chat.js", get(|| async { js_response() }))
+        .route("/assets/style.css", get(css))
+        .route("/assets/pkg/dupli_web_client.js", get(client_js))
+        .route("/assets/pkg/dupli_web_client_bg.wasm", get(client_wasm))
         .route("/api/sessions", get(list_sessions))
         .route("/api/session/:id", get(get_session))
         .route("/api/chat", post(chat))
@@ -43,19 +46,31 @@ pub async fn serve(agent: Agent, port: u16) -> Result<()> {
     Ok(())
 }
 
-async fn index() -> Html<String> {
-    let html = leptos::ssr::render_to_string(ui::shell);
-    Html(format!("<!DOCTYPE html>\n{html}"))
+async fn index() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "text/html; charset=utf-8")],
+        INDEX_HTML,
+    )
 }
 
-fn css_response() -> impl IntoResponse {
-    ([(axum::http::header::CONTENT_TYPE, "text/css; charset=utf-8")], STYLE_CSS)
+async fn css() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "text/css; charset=utf-8")],
+        STYLE_CSS,
+    )
 }
 
-fn js_response() -> impl IntoResponse {
+async fn client_js() -> impl IntoResponse {
     (
         [(axum::http::header::CONTENT_TYPE, "text/javascript; charset=utf-8")],
-        CHAT_JS,
+        CLIENT_JS,
+    )
+}
+
+async fn client_wasm() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "application/wasm")],
+        CLIENT_WASM,
     )
 }
 
@@ -79,9 +94,8 @@ async fn chat(
         }
     });
 
-    let stream = UnboundedReceiverStream::new(rx).map(|item| {
-        Ok::<_, Infallible>(Event::default().data(item))
-    });
+    let stream =
+        UnboundedReceiverStream::new(rx).map(|item| Ok::<_, Infallible>(Event::default().data(item)));
     Sse::new(stream).keep_alive(KeepAlive::default())
 }
 
@@ -100,10 +114,6 @@ async fn get_session(
 ) -> impl IntoResponse {
     match crate::session::Session::load(&id) {
         Ok(session) => Json(serde_json::json!(session)).into_response(),
-        Err(error) => (
-            axum::http::StatusCode::NOT_FOUND,
-            format!("{error:#}"),
-        )
-            .into_response(),
+        Err(error) => (axum::http::StatusCode::NOT_FOUND, format!("{error:#}")).into_response(),
     }
 }

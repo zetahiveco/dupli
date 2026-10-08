@@ -41,8 +41,8 @@ conveniences of [OpenCode](https://opencode.ai).
   and `/diff` show a unified diff against the session's starting state.
 - **Slash commands with autocomplete** — `/provider`, `/exit`, `/navigate`,
   `/diff`, and more. Press Tab after `/`.
-- **Web UI** — `dupli --web` serves an axum + leptos (SSR) interface with
-  token streaming and a session browser.
+- **Web UI** — `dupli --web` serves a leptos (WebAssembly) interface with
+  token streaming and a session browser — no JavaScript in the repo.
 - **Layered config** — global `~/.config/dupli/dupli.json`, per-folder
   `dupli.json` (or `.dupli/dupli.json`), CLI flags. Last one wins.
 
@@ -150,8 +150,11 @@ dupli --web
 # Dupli web UI: http://127.0.0.1:8620
 ```
 
-The same agent core powers both interfaces: leptos-rendered app shell,
-token streaming over SSE, session sidebar, action feed. The server binds
+The same agent core powers both interfaces. The UI is a leptos app
+(`web-client/`) compiled to WebAssembly: token streaming over SSE, session
+sidebar, action feed — all in Rust. Rebuild the WASM assets with
+`scripts/build-web.sh` after changing `web-client/` (requires the
+`wasm32-unknown-unknown` target and `wasm-bindgen-cli`). The server binds
 to `127.0.0.1` only and doesn't authenticate — keep it local.
 
 ## Project layout
@@ -173,7 +176,8 @@ to `127.0.0.1` only and doesn't authenticate — keep it local.
 │   ├── themes.rs       color themes
 │   ├── slash.rs        slash commands + rustyline completer
 │   ├── report.rs       output sinks (terminal / web)
-│   └── web/            axum server + leptos SSR UI
+│   └── web/            axum server + prebuilt leptos WASM assets
+├── web-client/         leptos (CSR) web UI, compiled to WebAssembly
 ├── site/               Rust-based static site generator (docs + landing)
 │   ├── content/docs/   markdown documentation
 │   ├── src/main.rs     the SSG
