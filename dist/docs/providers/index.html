@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Providers — Dupli Docs</title>
+<meta name="description" content="Providers — documentation for Dupli, a minimal Rust coding agent.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">dupli<span class="cursor">▌</span></a>
+  <nav>
+    <a href="/docs/getting-started">Getting Started</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/zetahiveco/dupli">GitHub</a>
+  </nav>
+</header>
+<div class="docs">
+  <aside class="docs-nav"><a href="/docs/">Overview</a>
+<a href="/docs/getting-started">Getting Started</a>
+<a href="/docs/installation">Installation</a>
+<a href="/docs/providers">Providers</a>
+<a href="/docs/configuration">Configuration</a>
+<a href="/docs/slash-commands">Slash Commands</a>
+<a href="/docs/sessions">Sessions</a>
+<a href="/docs/sandbox">Sandbox</a>
+<a href="/docs/mcp">MCP</a>
+<a href="/docs/skills">Skills</a>
+<a href="/docs/themes">Themes</a>
+<a href="/docs/web">Web UI</a>
+<a href="/docs/lsp">LSP & Diagnostics</a></aside>
+  <main class="docs-body"><h1>Providers</h1>
+<p>Dupli talks to four providers out of the box, using your own API keys.
+Model output streams token-by-token; reasoning/thinking streams are shown
+in a dim style before the answer.</p>
+<table><thead><tr><th>Provider</th><th><code>--provider</code> value</th><th>Environment variable</th></tr></thead><tbody>
+<tr><td>Anthropic</td><td><code>anthropic</code> (or <code>claude</code>)</td><td><code>ANTHROPIC_API_KEY</code></td></tr>
+<tr><td>OpenAI</td><td><code>openai</code></td><td><code>OPENAI_API_KEY</code></td></tr>
+<tr><td>Google Gemini</td><td><code>gemini</code> (or <code>google</code>)</td><td><code>GEMINI_API_KEY</code></td></tr>
+<tr><td>Fireworks AI</td><td><code>fireworks</code></td><td><code>FIREWORKS_API_KEY</code></td></tr>
+</tbody></table>
+<h2>Choosing at launch</h2>
+<pre><code class="language-sh">dupli --provider anthropic --model claude-sonnet-4-20250514
+</code></pre>
+<p>If you omit the flags, Dupli prompts for a provider and shows the default
+model in gray — press Enter to accept it.</p>
+<h2>Switching mid-session</h2>
+<pre><code class="language-text">» /provider openai
+» /model gpt-4.1
+</code></pre>
+<p>Dupli re-reads the provider’s environment variable on the next request, so
+switching providers on the fly just works as long as both keys are exported.</p>
+<h2>Defaults</h2>
+<table><thead><tr><th>Provider</th><th>Default model</th></tr></thead><tbody>
+<tr><td>Anthropic</td><td><code>claude-sonnet-4-20250514</code></td></tr>
+<tr><td>OpenAI</td><td><code>gpt-4.1</code></td></tr>
+<tr><td>Gemini</td><td><code>gemini-2.5-flash</code></td></tr>
+<tr><td>Fireworks</td><td><code>accounts/fireworks/models/glm-5p3-flash</code></td></tr>
+</tbody></table>
+<p>You can pin the provider and model in
+<a href="/docs/configuration">config</a> so you never see the prompts.</p>
+</main>
+</div>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+</body>
+</html>

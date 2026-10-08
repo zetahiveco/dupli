@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LSP & Diagnostics — Dupli Docs</title>
+<meta name="description" content="LSP & Diagnostics — documentation for Dupli, a minimal Rust coding agent.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">dupli<span class="cursor">▌</span></a>
+  <nav>
+    <a href="/docs/getting-started">Getting Started</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/zetahiveco/dupli">GitHub</a>
+  </nav>
+</header>
+<div class="docs">
+  <aside class="docs-nav"><a href="/docs/">Overview</a>
+<a href="/docs/getting-started">Getting Started</a>
+<a href="/docs/installation">Installation</a>
+<a href="/docs/providers">Providers</a>
+<a href="/docs/configuration">Configuration</a>
+<a href="/docs/slash-commands">Slash Commands</a>
+<a href="/docs/sessions">Sessions</a>
+<a href="/docs/sandbox">Sandbox</a>
+<a href="/docs/mcp">MCP</a>
+<a href="/docs/skills">Skills</a>
+<a href="/docs/themes">Themes</a>
+<a href="/docs/web">Web UI</a>
+<a href="/docs/lsp">LSP & Diagnostics</a></aside>
+  <main class="docs-body"><h1>LSP &amp; Diagnostics</h1>
+<p>Unlike most minimal agents, Dupli ships its own lightweight LSP client.
+It spawns language servers on demand and pipes their diagnostics straight
+into your session — great for “fix the errors” style prompts.</p>
+<h2>Configure a server</h2>
+<p>In <code>dupli.json</code> (global or per-folder), map a language id to a server:</p>
+<pre><code class="language-json">{
+  "lspServers": {
+    "rust": { "command": "rust-analyzer" },
+    "typescript": { "command": "typescript-language-server", "args": ["--stdio"] }
+  }
+}
+</code></pre>
+<h2>Use it</h2>
+<p>From the prompt:</p>
+<pre><code class="language-text">» /diagnostics src/main.rs
+Diagnostics from 'rust-analyzer' for src/main.rs:
+  L42 [error] cannot borrow `x` as mutable twice at a time
+</code></pre>
+<p>Or ask the model — it can run the same machinery itself:</p>
+<pre><code class="language-json">{"type": "diagnostics", "path": "src/main.rs", "language": "rust"}
+</code></pre>
+<h2>How it works</h2>
+<ol>
+<li>The language server is started on first use (per language, per session).</li>
+<li>Dupli performs the <code>initialize</code>/<code>initialized</code> handshake.</li>
+<li>The file is opened via <code>textDocument/didOpen</code>.</li>
+<li><code>textDocument/publishDiagnostics</code> notifications are collected and
+formatted with line numbers and severities.</li>
+</ol>
+<p>Only diagnostics are wired in today; hover and completions are natural
+next steps. PRs welcome.</p>
+</main>
+</div>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+</body>
+</html>

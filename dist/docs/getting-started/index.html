@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting Started — Dupli Docs</title>
+<meta name="description" content="Getting Started — documentation for Dupli, a minimal Rust coding agent.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">dupli<span class="cursor">▌</span></a>
+  <nav>
+    <a href="/docs/getting-started">Getting Started</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/zetahiveco/dupli">GitHub</a>
+  </nav>
+</header>
+<div class="docs">
+  <aside class="docs-nav"><a href="/docs/">Overview</a>
+<a href="/docs/getting-started">Getting Started</a>
+<a href="/docs/installation">Installation</a>
+<a href="/docs/providers">Providers</a>
+<a href="/docs/configuration">Configuration</a>
+<a href="/docs/slash-commands">Slash Commands</a>
+<a href="/docs/sessions">Sessions</a>
+<a href="/docs/sandbox">Sandbox</a>
+<a href="/docs/mcp">MCP</a>
+<a href="/docs/skills">Skills</a>
+<a href="/docs/themes">Themes</a>
+<a href="/docs/web">Web UI</a>
+<a href="/docs/lsp">LSP & Diagnostics</a></aside>
+  <main class="docs-body"><h1>Getting Started</h1>
+<p>Get Dupli running in your project in about two minutes.</p>
+<h2>1. Install</h2>
+<p>Requires Rust. Clone and build:</p>
+<pre><code class="language-sh">git clone https://github.com/zetahiveco/dupli
+cd dupli
+cargo install --path .
+</code></pre>
+<h2>2. Add an API key</h2>
+<p>Dupli is bring-your-own-key. Export the key for the provider you want:</p>
+<pre><code class="language-sh">export ANTHROPIC_API_KEY="sk-..."
+# or OPENAI_API_KEY, GEMINI_API_KEY, FIREWORKS_API_KEY
+</code></pre>
+<h2>3. Run</h2>
+<p>From any project folder:</p>
+<pre><code class="language-sh">cd my-project
+dupli
+</code></pre>
+<p>You’ll pick a provider and model, then land at the <code>»</code> prompt. Say hello:</p>
+<pre><code class="language-text">» list the files in src and explain what this project does
+</code></pre>
+<h2>4. Approve actions</h2>
+<p>Dupli asks before running any shell command:</p>
+<pre><code class="language-text">Allow command `cargo test`? [y/N]
+</code></pre>
+<p>File writes never need approval, and every write is reversible — see
+<a href="/docs/slash-commands#undo-redo">Undo / Redo</a>.</p>
+<h2>5. Pick a theme</h2>
+<pre><code class="language-text">» /theme dracula
+</code></pre>
+<h2>Tips</h2>
+<ul>
+<li>Press <strong>Tab</strong> after typing <code>/</code> to autocomplete slash commands.</li>
+<li><code>/exit</code> or <strong>Ctrl+D</strong> leaves the session; it’s saved automatically.</li>
+<li><code>dupli -c</code> resumes your most recent session next time.</li>
+</ul>
+</main>
+</div>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+</body>
+</html>

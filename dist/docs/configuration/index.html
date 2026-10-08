@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuration — Dupli Docs</title>
+<meta name="description" content="Configuration — documentation for Dupli, a minimal Rust coding agent.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">dupli<span class="cursor">▌</span></a>
+  <nav>
+    <a href="/docs/getting-started">Getting Started</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/zetahiveco/dupli">GitHub</a>
+  </nav>
+</header>
+<div class="docs">
+  <aside class="docs-nav"><a href="/docs/">Overview</a>
+<a href="/docs/getting-started">Getting Started</a>
+<a href="/docs/installation">Installation</a>
+<a href="/docs/providers">Providers</a>
+<a href="/docs/configuration">Configuration</a>
+<a href="/docs/slash-commands">Slash Commands</a>
+<a href="/docs/sessions">Sessions</a>
+<a href="/docs/sandbox">Sandbox</a>
+<a href="/docs/mcp">MCP</a>
+<a href="/docs/skills">Skills</a>
+<a href="/docs/themes">Themes</a>
+<a href="/docs/web">Web UI</a>
+<a href="/docs/lsp">LSP & Diagnostics</a></aside>
+  <main class="docs-body"><h1>Configuration</h1>
+<p>Dupli layers configuration, and the last layer always wins:</p>
+<ol>
+<li>Built-in defaults</li>
+<li>Global config — <code>~/.config/dupli/dupli.json</code></li>
+<li>Per-folder config — <code>./dupli.json</code> or <code>./.dupli/dupli.json</code></li>
+<li>CLI flags — <code>--provider</code>, <code>--model</code>, <code>--theme</code>, <code>--sandbox</code>, <code>--web-port</code></li>
+</ol>
+<p>This works like OpenCode’s config: one global file for your preferences,
+one file per project for anything project-specific.</p>
+<h2>Example</h2>
+<pre><code class="language-json">{
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-20250514",
+  "theme": "dracula",
+  "sandbox": false,
+  "sandboxImage": "ubuntu:24.04",
+  "maxTurns": 8,
+  "autoApprove": false,
+  "webPort": 8620,
+  "mcpServers": {
+    "fetch": { "command": "uvx", "args": ["mcp-server-fetch"] }
+  },
+  "lspServers": {
+    "rust": { "command": "rust-analyzer" }
+  }
+}
+</code></pre>
+<h2>Fields</h2>
+<table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>provider</code></td><td>string</td><td>—</td><td><code>anthropic</code>, <code>openai</code>, <code>gemini</code>, <code>fireworks</code></td></tr>
+<tr><td><code>model</code></td><td>string</td><td>provider default</td><td>Model ID passed to the API</td></tr>
+<tr><td><code>theme</code></td><td>string</td><td><code>dupli</code></td><td>See <a href="/docs/themes">Themes</a></td></tr>
+<tr><td><code>sandbox</code></td><td>bool</td><td><code>false</code></td><td>Run shell commands in Docker</td></tr>
+<tr><td><code>sandboxImage</code></td><td>string</td><td><code>ubuntu:24.04</code></td><td>Image for the sandbox</td></tr>
+<tr><td><code>maxTurns</code></td><td>number</td><td><code>8</code></td><td>Action rounds per prompt</td></tr>
+<tr><td><code>autoApprove</code></td><td>bool</td><td><code>false</code></td><td>Reserve for non-interactive flows</td></tr>
+<tr><td><code>webPort</code></td><td>number</td><td><code>8620</code></td><td>Port for <code>--web</code></td></tr>
+<tr><td><code>mcpServers</code></td><td>object</td><td><code>{}</code></td><td>See <a href="/docs/mcp">MCP</a></td></tr>
+<tr><td><code>lspServers</code></td><td>object</td><td><code>{}</code></td><td>See <a href="/docs/lsp">LSP</a></td></tr>
+</tbody></table>
+<h2>Project vs global</h2>
+<p>The per-folder file is ideal for project-specific servers and models:</p>
+<pre><code class="language-json">{ "provider": "fireworks", "mcpServers": { "db": { "command": "pg-mcp" } } }
+</code></pre>
+<p>Keep the global file for personal defaults like your theme. Both files are
+plain JSON; <code>mcpServers</code> and <code>lspServers</code> maps are merged across layers.</p>
+</main>
+</div>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+</body>
+</html>

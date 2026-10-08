@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP — Dupli Docs</title>
+<meta name="description" content="MCP — documentation for Dupli, a minimal Rust coding agent.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">dupli<span class="cursor">▌</span></a>
+  <nav>
+    <a href="/docs/getting-started">Getting Started</a>
+    <a href="/docs/">Docs</a>
+    <a href="https://github.com/zetahiveco/dupli">GitHub</a>
+  </nav>
+</header>
+<div class="docs">
+  <aside class="docs-nav"><a href="/docs/">Overview</a>
+<a href="/docs/getting-started">Getting Started</a>
+<a href="/docs/installation">Installation</a>
+<a href="/docs/providers">Providers</a>
+<a href="/docs/configuration">Configuration</a>
+<a href="/docs/slash-commands">Slash Commands</a>
+<a href="/docs/sessions">Sessions</a>
+<a href="/docs/sandbox">Sandbox</a>
+<a href="/docs/mcp">MCP</a>
+<a href="/docs/skills">Skills</a>
+<a href="/docs/themes">Themes</a>
+<a href="/docs/web">Web UI</a>
+<a href="/docs/lsp">LSP & Diagnostics</a></aside>
+  <main class="docs-body"><h1>MCP</h1>
+<p>Dupli speaks the <a href="https://modelcontextprotocol.io">Model Context Protocol</a>
+over stdio. Configure servers once and their tools become available to the
+model as regular actions — no extra flags needed at launch.</p>
+<h2>Configuration</h2>
+<p>Add servers to any config file (global or per-folder):</p>
+<pre><code class="language-json">{
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "files": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "env": { "SOME_VAR": "value" }
+    }
+  }
+}
+</code></pre>
+<h2>What happens at startup</h2>
+<ol>
+<li>Dupli spawns each server process.</li>
+<li>It performs the <code>initialize</code> handshake (protocol <code>2024-11-05</code>).</li>
+<li>It calls <code>tools/list</code> and registers every tool.</li>
+<li>The tools are listed in the system prompt, so the model can call:</li>
+</ol>
+<pre><code class="language-json">{"type": "mcp_tool", "server": "fetch", "tool": "fetch",
+ "arguments": {"url": "https://example.com"}}
+</code></pre>
+<h2>Inspecting</h2>
+<pre><code class="language-text">» /mcp
+  fetch:
+    fetch — Fetches a URL and returns its content
+</code></pre>
+<p>If a server fails to start, Dupli prints a warning and keeps going — a
+broken MCP server never blocks your session.</p>
+</main>
+</div>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+</body>
+</html>
