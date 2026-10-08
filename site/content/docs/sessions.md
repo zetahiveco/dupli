@@ -15,8 +15,14 @@ Or from inside Dupli:
 
 ```text
 » /sessions
-» /resume 18f2a1c9e4b-3f01
+Resume which session? (↑/↓ to move, Enter to pick, Esc to cancel)
+  > Fix the auth flow     2026-10-08 12:41 · 18f2a1c9e4b-3f01
+    Refactor the router   2026-10-08 09:12 · 1a11a40c8c2-7d9c
 ```
+
+Pick with ↑/↓ (or j/k) and Enter; Esc cancels. Resuming replays the
+session's previous history in the terminal so you can see where you left
+off. Resuming also applies to `dupli -c` and `dupli --session <id>`.
 
 ## What's saved
 

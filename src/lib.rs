@@ -5,6 +5,7 @@ pub mod history;
 pub mod images;
 pub mod lsp;
 pub mod mcp;
+pub mod picker;
 pub mod protocol;
 pub mod providers;
 pub mod report;

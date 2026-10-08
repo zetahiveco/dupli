@@ -28,7 +28,8 @@ conveniences of [OpenCode](https://opencode.ai).
 - **Docker sandbox** — start with `--sandbox` and every shell command runs
   inside a fresh container with your project mounted at `/workspace`.
 - **Sessions** — every conversation is saved as plain JSON. Resume with
-  `-c` / `--session`, browse with `/sessions`, rewind with `/navigate`.
+  `-c` / `--session`, browse with `/sessions` (arrow keys + Enter; the
+  previous history replays when you resume), rewind with `/navigate`.
 - **Themes** — six built-in color themes (`dupli`, `nord`, `dracula`,
   `solarized`, `everforest`, `mono`), switchable live with `/theme`.
 - **Skills** — drop a `SKILL.md` into `.dupli/skills/` and the agent loads
@@ -106,8 +107,7 @@ Type `/` and press **Tab** to autocomplete.
 | `/undo` | | Revert the last file write |
 | `/redo` | | Re-apply an undone write |
 | `/navigate` | `[turn]` | Rewind the conversation |
-| `/sessions` | | List saved sessions |
-| `/resume` | `[id]` | Resume a session |
+| `/sessions` | | Pick a saved session to resume (↑/↓ + Enter) |
 | `/theme` | `[name]` | Switch color theme |
 | `/skills` | | List skills |
 | `/mcp` | | List MCP servers and tools |

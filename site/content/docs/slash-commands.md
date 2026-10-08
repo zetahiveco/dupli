@@ -2,7 +2,7 @@
 
 Slash commands control the harness; anything else you type goes to the
 model. Type `/` and press **Tab** to see them all — arguments complete too
-(providers, themes, session ids).
+(providers, themes, image files).
 
 | Command | Arguments | Description |
 | --- | --- | --- |
@@ -14,8 +14,7 @@ model. Type `/` and press **Tab** to see them all — arguments complete too
 | `/undo` | — | Revert the last file write |
 | `/redo` | — | Re-apply an undone write |
 | `/navigate` | `[turn]` | Rewind the conversation to a turn |
-| `/sessions` | — | List saved sessions |
-| `/resume` | `[id]` | Resume a saved session |
+| `/sessions` | — | Pick a saved session to resume (↑/↓ + Enter) |
 | `/theme` | `[name]` | Switch the color theme |
 | `/skills` | — | List available skills |
 | `/mcp` | — | List connected MCP servers and tools |

@@ -274,7 +274,7 @@ impl Agent {
         ))
     }
 
-    // ----- sessions (slash: /sessions, /resume) -----
+    // ----- sessions (slash: /sessions picker) -----
 
     pub fn resume(&mut self, id: &str) -> Result<String> {
         let session = Session::load(id)?;

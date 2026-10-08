@@ -22,8 +22,7 @@ pub const COMMANDS: &[CommandDef] = &[
     CommandDef { name: "undo", args: "", desc: "Revert the last file write" },
     CommandDef { name: "redo", args: "", desc: "Re-apply an undone write" },
     CommandDef { name: "navigate", args: "[turn]", desc: "Rewind the conversation to a turn" },
-    CommandDef { name: "sessions", args: "", desc: "List saved sessions" },
-    CommandDef { name: "resume", args: "[id]", desc: "Resume a saved session" },
+    CommandDef { name: "sessions", args: "", desc: "Browse saved sessions and resume one (↑/↓ + Enter)" },
     CommandDef { name: "theme", args: "[name]", desc: "Switch the color theme" },
     CommandDef { name: "skills", args: "", desc: "List available skills" },
     CommandDef { name: "mcp", args: "", desc: "List connected MCP servers and tools" },
@@ -59,11 +58,10 @@ pub fn command_name(line: &str) -> &str {
 }
 
 /// rustyline completer: completes command names after `/` and arguments
-/// after `/provider`, `/theme`, and `/resume`.
+/// after `/provider` and `/theme`.
 pub struct SlashHelper {
     pub providers: Vec<String>,
     pub themes: Vec<String>,
-    pub session_ids: Vec<String>,
 }
 
 impl SlashHelper {
@@ -77,11 +75,6 @@ impl SlashHelper {
                 .into_iter()
                 .map(str::to_owned)
                 .collect(),
-            session_ids: crate::session::Session::list()
-                .into_iter()
-                .take(20)
-                .map(|(id, _, _)| id)
-                .collect(),
         }
     }
 
@@ -89,7 +82,6 @@ impl SlashHelper {
         match command {
             "provider" => self.providers.clone(),
             "theme" => self.themes.clone(),
-            "resume" => self.session_ids.clone(),
             // Complete image files in the current directory for /image.
             "image" => {
                 let mut files = Vec::new();

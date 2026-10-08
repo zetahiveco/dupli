@@ -1,5 +1,7 @@
 use crate::agent::Agent;
 use crate::config::{self, Provider};
+use crate::picker;
+use crate::protocol::ChatMessage;
 use crate::report::TerminalReporter;
 use crate::session::Session;
 use crate::slash::{self, SlashHelper};
@@ -58,10 +60,14 @@ pub async fn run() -> Result<()> {
     };
 
     let mut agent = Agent::new(root.clone(), cfg.clone(), provider, model)?;
+    let resumed = loaded_session.is_some();
     if let Some(session) = &loaded_session {
         agent.resume(&session.id)?;
     }
     print_startup_notes(&mut agent, theme);
+    if resumed {
+        print_history(&agent, theme);
+    }
 
     let mut reporter = TerminalReporter { theme };
     banner(&agent, theme);
@@ -132,8 +138,73 @@ fn banner(agent: &Agent, theme: &'static themes::Theme) {
     );
 }
 
-fn print_startup_notes(agent: &mut Agent, theme: &'static themes::Theme) {
-    for note in &agent.startup_notes {
+/// Replay a resumed session's conversation so the user sees where they
+/// left off. Assistant messages are stored as raw provider JSON; show the
+/// `message` field when present.
+fn print_history(agent: &Agent, theme: &'static themes::Theme) {
+    let transcript: Vec<ChatMessage> = agent
+        .history
+        .iter()
+        .filter(|message| {
+            !(message.role == "user" && message.content.starts_with("Action results:"))
+        })
+        .cloned()
+        .collect();
+    if transcript.is_empty() {
+        println!("{}(This session has no messages yet.){}", theme.dim, theme.reset);
+        return;
+    }
+    println!(
+        "{}── previous history ──────────────{}",
+        theme.dim, theme.reset
+    );
+    for message in &transcript {
+        match message.role.as_str() {
+            "user" => {
+                println!(
+                    "{}you{}: {}",
+                    theme.accent, theme.reset, message.content
+                );
+            }
+            "assistant" => {
+                let text = serde_json::from_str::<serde_json::Value>(&message.content)
+                    .ok()
+                    .and_then(|value| {
+                        value.get("message").and_then(|text| text.as_str()).map(str::to_owned)
+                    })
+                    .unwrap_or_else(|| message.content.clone());
+                println!(
+                    "{}dupli{}: {text}",
+                    theme.accent, theme.reset
+                );
+            }
+            _ => {}
+        }
+    }
+    println!("{}──────────────────────────────────{}", theme.dim, theme.reset);
+}
+
+/// UTC date for a unix timestamp, no chrono dependency.
+fn format_time(created: &u64) -> String {
+    let secs = *created;
+    let days = secs / 86_400;
+    // Civil date from days since 1970-01-01 (Howard Hinnant's algorithm).
+    let z = days as i64 + 719_468;
+    let era = z.div_euclid(146_097);
+    let doe = z.rem_euclid(146_097);
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let year = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let day = doy - (153 * mp + 2) / 5 + 1;
+    let month = if mp < 10 { mp + 3 } else { mp - 9 };
+    let year = if month <= 2 { year + 1 } else { year };
+    let time_of_day = secs % 86_400;
+    let (hour, minute) = (time_of_day / 3600, (time_of_day % 3600) / 60);
+    format!("{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}")
+}
+
+fn print_startup_notes(agent: &mut Agent, theme: &'static themes::Theme) {    for note in &agent.startup_notes {
         eprintln!("{}{note}{}", theme.warning, theme.reset);
     }
     if !agent.skills.is_empty() {
@@ -232,16 +303,25 @@ async fn handle_command(
             if sessions.is_empty() {
                 println!("No saved sessions.");
             } else {
-                for (id, title, _created) in sessions.iter().take(10) {
-                    println!("  {id}  {title}");
+                let dim = theme.dim;
+                let reset = theme.reset;
+                let options: Vec<String> = sessions
+                    .iter()
+                    .take(12)
+                    .map(|(id, title, created)| {
+                        let date = format_time(created);
+                        format!("{title}  {dim}{date} · {id}{reset}")
+                    })
+                    .collect();
+                match picker::pick("Resume which session? (↑/↓ to move, Enter to pick, Esc to cancel)", &options)? {
+                    Some(index) => {
+                        let (id, _, _) = &sessions[index];
+                        println!("{}", agent.resume(id)?);
+                        print_history(agent, theme);
+                    }
+                    None => println!("Canceled."),
                 }
             }
-        }
-        "resume" => {
-            if arg.is_empty() {
-                bail!("/resume needs a session id. List them with /sessions.");
-            }
-            println!("{}", agent.resume(arg)?);
         }
         "theme" => {
             if arg.is_empty() {
@@ -342,4 +422,19 @@ fn detect_language(path: &std::path::Path) -> String {
         _ => "plaintext",
     }
     .to_owned()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::format_time;
+
+    #[test]
+    fn format_time_renders_utc_dates() {
+        // 2026-10-08 06:45:48 UTC
+        assert_eq!(format_time(&1_791_441_948), "2026-10-08 06:45");
+        // The epoch itself: 1970-01-01 00:00 UTC.
+        assert_eq!(format_time(&0), "1970-01-01 00:00");
+        // A leap day: 2024-02-29 12:00 UTC.
+        assert_eq!(format_time(&1_709_208_000), "2024-02-29 12:00");
+    }
 }
