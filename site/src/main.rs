@@ -165,7 +165,7 @@ fn landing() -> String {
 <span class="p">»</span> refactor the auth module and run the tests
 <span class="d">…streams plan, edits files, runs commands inside docker…</span></code></pre>
 </section>
-<footer class="site-footer">Dupli — MIT licensed. Inspired by <a href="https://pi.dev">Pi</a> and <a href="https://opencode.ai">OpenCode</a>, built in Rust.</footer>
+<footer class="site-footer">Dupli — MIT licensed. Made by <a href="https://zetahive.co" target="_blank" rel="noopener">zetahive.co</a> and <a href="https://github.com/harishdeivanayagam" target="_blank" rel="noopener">harishdeivanayagam</a>.</footer>
 </body>
 </html>"#
     )
@@ -220,7 +220,7 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
   <aside class="docs-nav">{nav}</aside>
   <main class="docs-body">{content}</main>
 </div>
-<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a></footer>
+<footer class="site-footer">Dupli — MIT licensed. <a href="/docs/">All docs</a>. Made by <a href="https://zetahive.co" target="_blank" rel="noopener">zetahive.co</a> and <a href="https://github.com/harishdeivanayagam" target="_blank" rel="noopener">harishdeivanayagam</a>.</footer>
 </body>
 </html>"#
     )
