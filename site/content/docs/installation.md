@@ -46,6 +46,27 @@ dupli --version
 dupli --help
 ```
 
+## Updating
+
+Dupli checks GitHub releases in the background every time it starts. If a
+newer version exists, the matching prebuilt tarball is downloaded and
+installed over the current binary automatically — you'll see a note, and
+the new version is used the next time you start `dupli`. The check is
+silent offline and never blocks startup.
+
+To control it:
+
+```sh
+dupli --update          # check and install right now
+```
+
+```json
+{ "autoUpdate": false }   // or set DUPLI_NO_UPDATE_CHECK=1 to disable
+```
+
+The update only self-installs from an installed binary (e.g.
+`~/.local/bin/dupli`); dev checkouts built with cargo don't self-replace.
+
 ## Platforms
 
 Prebuilt binaries: macOS (Apple silicon and Intel). Windows and Linux work

@@ -6,6 +6,7 @@ use crate::report::TerminalReporter;
 use crate::session::Session;
 use crate::slash::{self, SlashHelper};
 use crate::themes;
+use crate::update;
 use crate::web;
 use anyhow::{bail, Context, Result};
 use rustyline::error::ReadlineError;
@@ -20,10 +21,21 @@ enum Flow {
 
 pub async fn run() -> Result<()> {
     let options = config::parse_args()?;
+
+    // Manual update: check, download, install, exit.
+    if options.update {
+        return update::run_update_command().await;
+    }
+
     let root = env::current_dir()?.canonicalize()?;
     let loaded = config::load(&root)?;
     let cfg = config::resolve(loaded, &options)?;
     let theme = themes::get(&cfg.theme);
+
+    // Automatic update check while launching (skipped in dev builds).
+    if cfg.auto_update {
+        update::spawn_update_check();
+    }
 
     // Web UI mode: serve the axum + leptos app and exit the TUI path.
     if options.web {

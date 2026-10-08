@@ -105,6 +105,7 @@ pub struct Config {
     pub sandbox_image: String,
     pub max_turns: usize,
     pub auto_approve: bool,
+    pub auto_update: bool,
     pub web_port: u16,
     pub mcp_servers: BTreeMap<String, McpServerConfig>,
     pub lsp_servers: BTreeMap<String, LspServerConfig>,
@@ -120,6 +121,7 @@ impl Default for Config {
             sandbox_image: "ubuntu:24.04".to_owned(),
             max_turns: 8,
             auto_approve: false,
+            auto_update: true,
             web_port: 8620,
             mcp_servers: BTreeMap::new(),
             lsp_servers: BTreeMap::new(),
@@ -153,6 +155,9 @@ impl Config {
         if let Some(auto_approve) = file.auto_approve {
             self.auto_approve = auto_approve;
         }
+        if let Some(auto_update) = file.auto_update {
+            self.auto_update = auto_update;
+        }
         if let Some(port) = file.web_port {
             self.web_port = port;
         }
@@ -176,6 +181,9 @@ struct FileConfig {
     sandbox_image: Option<String>,
     max_turns: Option<usize>,
     auto_approve: Option<bool>,
+    /// Accepts `autoUpdate` (camelCase) or `auto_update` (snake_case).
+    #[serde(alias = "auto_update")]
+    auto_update: Option<bool>,
     web_port: Option<u16>,
     /// Accepts both `mcpServers` (camelCase) and `mcp_servers` (snake_case).
     #[serde(alias = "mcp_servers")]
@@ -296,6 +304,8 @@ pub struct CliOptions {
     pub continue_session: bool,
     pub session_id: Option<String>,
     pub prompt: Option<String>,
+    /// `--update`: check for a new release, download and install it now.
+    pub update: bool,
 }
 
 /// Applies CLI flag overrides on top of the loaded config.
@@ -337,6 +347,7 @@ pub fn parse_args() -> Result<CliOptions> {
     let mut continue_session = false;
     let mut session_id = None;
     let mut prompt = None;
+    let mut update = false;
 
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -363,6 +374,7 @@ pub fn parse_args() -> Result<CliOptions> {
             "--print" => {
                 prompt = Some(args.next().ok_or_else(|| anyhow!("{arg} requires a value"))?);
             }
+            "--update" => update = true,
             "--help" | "-h" => {
                 print_help();
                 std::process::exit(0);
@@ -385,6 +397,7 @@ pub fn parse_args() -> Result<CliOptions> {
         continue_session,
         session_id,
         prompt,
+        update,
     })
 }
 
@@ -404,6 +417,7 @@ Options:
   -c, --continue           Resume the most recent session
   -s, --session <ID>       Resume a specific session
       --print <PROMPT>     Run one prompt and exit (print mode)
+      --update             Check for updates, download and install
   -h, --help               Show this help
   -v, --version            Show version
 

@@ -30,6 +30,10 @@ conveniences of [OpenCode](https://opencode.ai).
 - **Sessions** — every conversation is saved as plain JSON. Resume with
   `-c` / `--session`, browse with `/sessions` (arrow keys + Enter; the
   previous history replays when you resume), rewind with `/navigate`.
+- **Auto-updates** — on launch Dupli checks GitHub releases in the
+  background; a new version is downloaded and installed automatically
+  (used on next start). Disable with `"autoUpdate": false` or
+  `DUPLI_NO_UPDATE_CHECK=1`, or run `dupli --update` yourself.
 - **Themes** — six built-in color themes (`dupli`, `nord`, `dracula`,
   `solarized`, `everforest`, `mono`), switchable live with `/theme`.
 - **Skills** — drop a `SKILL.md` into `.dupli/skills/` and the agent loads
@@ -91,6 +95,7 @@ dupli [OPTIONS] [PROMPT]
   -c, --continue           resume the most recent session
   -s, --session <ID>       resume a specific session
       --print <PROMPT>     run one prompt and exit
+      --update             check for updates, download and install
 ```
 
 ## Slash commands
@@ -133,6 +138,7 @@ Config layers in this order (later wins): defaults → global → project → CL
   "sandboxImage": "ubuntu:24.04",
   "maxTurns": 8,
   "autoApprove": false,
+  "autoUpdate": true,
   "webPort": 8620,
   "mcpServers": {
     "fetch": { "command": "uvx", "args": ["mcp-server-fetch"] }

@@ -15,4 +15,5 @@ pub mod skills;
 pub mod slash;
 pub mod themes;
 pub mod tools;
+pub mod update;
 pub mod web;
