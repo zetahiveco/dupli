@@ -214,6 +214,12 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
 <meta property="og:title" content="{title} — Dupli Docs">
 <meta property="og:description" content="{title} — documentation for Dupli, a minimal AI coding agent written in Rust.">
 <meta property="og:url" content="https://dupli.dev{active}">
+<meta property="og:site_name" content="Dupli">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{title} — Dupli Docs">
+<link rel="canonical" href="https://dupli.dev{active}">
+<link rel="stylesheet" href="/styles.css">
+</head>
 <body>
 {NAV}
 <div class="docs">
