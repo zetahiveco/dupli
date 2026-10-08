@@ -81,11 +81,11 @@ fn render_markdown(markdown: &str) -> String {
     output
 }
 
-fn doc_url(route: &str) -> &str {
+fn doc_url(route: &str) -> String {
     if route == "docs/index" {
-        "/docs/"
+        "/docs/".to_owned()
     } else {
-        route.trim_start_matches("docs")
+        format!("/{}", route)
     }
 }
 
@@ -106,8 +106,18 @@ fn landing() -> String {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dupli — a minimal Rust coding agent</title>
-<meta name="description" content="Dupli is a minimal, hackable AI coding agent written in Rust. MCP, Docker sandboxes, sessions, themes, skills, LSP diagnostics, undo/redo, and a web UI.">
+<title>Dupli — a minimal coding agent written in Rust</title>
+<meta name="description" content="Dupli is a minimal, hackable AI coding agent written in Rust. Bring your own key, stream from Anthropic, OpenAI, Gemini or Fireworks, with MCP, Docker sandboxing, sessions, themes, skills, LSP diagnostics, undo/redo and a web UI.">
+<meta name="keywords" content="dupli, coding agent, ai agent, cli, rust, terminal, tui, llm, mcp, model context protocol, claude code alternative, pi alternative, opencode alternative, developer tools, copilot">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dupli — a minimal coding agent written in Rust">
+<meta property="og:description" content="A minimal, hackable AI coding agent written in Rust. Bring your own key. MCP, Docker sandbox, sessions, themes, skills, LSP diagnostics, web UI.">
+<meta property="og:url" content="https://dupli.dev">
+<meta property="og:site_name" content="Dupli">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dupli — a minimal coding agent written in Rust">
+<meta name="twitter:description" content="A minimal, hackable AI coding agent written in Rust. Bring your own key.">
+<link rel="canonical" href="https://dupli.dev">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -186,6 +196,11 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n");
+    let kw = links
+        .iter()
+        .find(|(href, _)| *href != "/docs/" && (active == *href || format!("{active}/").starts_with(href)))
+        .map(|(_, label)| label.to_ascii_lowercase().replace(' ', "-").replace('&', "and"))
+        .unwrap_or_else(|| "docs".to_owned());
     format!(
         r#"<!DOCTYPE html>
 <html lang="en">
@@ -193,9 +208,12 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} — Dupli Docs</title>
-<meta name="description" content="{title} — documentation for Dupli, a minimal Rust coding agent.">
-<link rel="stylesheet" href="/styles.css">
-</head>
+<meta name="description" content="{title} — documentation for Dupli, a minimal AI coding agent written in Rust. Bring your own key: MCP, Docker sandbox, sessions, themes, skills, LSP diagnostics, web UI.">
+<meta name="keywords" content="dupli, coding agent, ai agent, cli, rust, terminal, tui, llm, mcp, model context protocol, {kw}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{title} — Dupli Docs">
+<meta property="og:description" content="{title} — documentation for Dupli, a minimal AI coding agent written in Rust.">
+<meta property="og:url" content="https://dupli.dev{active}">
 <body>
 {NAV}
 <div class="docs">
