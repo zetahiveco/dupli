@@ -21,6 +21,7 @@ model. Type `/` and press **Tab** to see them all — arguments complete too
 | `/mcp` | — | List connected MCP servers and tools |
 | `/sandbox` | `[on\|off]` | Toggle the Docker sandbox |
 | `/diagnostics` | `[path]` | LSP diagnostics for a file |
+| `/image` | `<path\|url>` | Attach an image to your next message |
 
 ## Navigate
 

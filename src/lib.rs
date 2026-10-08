@@ -2,6 +2,7 @@ pub mod agent;
 pub mod cli;
 pub mod config;
 pub mod history;
+pub mod images;
 pub mod lsp;
 pub mod mcp;
 pub mod protocol;

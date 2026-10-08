@@ -2,9 +2,20 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ImageAttachment {
+    /// MIME type, e.g. `image/png`.
+    pub media_type: String,
+    /// Base64-encoded image bytes.
+    pub data: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ChatMessage {
     pub role: String,
     pub content: String,
+    /// Images attached by the user (always empty on assistant messages).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub images: Vec<ImageAttachment>,
 }
 
 #[derive(Deserialize)]

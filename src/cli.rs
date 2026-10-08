@@ -82,7 +82,7 @@ pub async fn run() -> Result<()> {
                 }
                 let _ = rl.add_history_entry(&line);
                 if slash::is_command(&line) {
-                    match handle_command(&mut agent, &line, &mut reporter)? {
+                    match handle_command(&mut agent, &line, &mut reporter).await? {
                         Flow::Continue => continue,
                         Flow::Exit => break,
                     }
@@ -100,7 +100,17 @@ pub async fn run() -> Result<()> {
 fn pick_provider_model(cfg: &config::Config) -> Result<(Provider, String)> {
     let provider = match cfg.provider {
         Some(provider) => provider,
-        None => config::choose_provider()?,
+        None => {
+            let provider = config::choose_provider()?;
+            // First-run choice: remember it so we don't ask again next time.
+            if let Err(error) = config::save_global_provider(provider) {
+                eprintln!(
+                    "Warning: could not save the provider choice: {error:#}. \
+                     You may be asked again."
+                );
+            }
+            provider
+        }
     };
     let model = match &cfg.model {
         Some(model) => model.clone(),
@@ -154,7 +164,7 @@ fn print_startup_notes(agent: &mut Agent, theme: &'static themes::Theme) {
     }
 }
 
-fn handle_command(
+async fn handle_command(
     agent: &mut Agent,
     line: &str,
     reporter: &mut TerminalReporter,
@@ -301,6 +311,13 @@ fn handle_command(
             let client = agent.lsp_for(&language)?;
             client.did_open(&path, &language)?;
             println!("{}", client.wait_diagnostics(&path, 5)?);
+        }
+        "image" => {
+            if arg.is_empty() {
+                bail!("/image needs a local path or an https URL, e.g. /image screenshot.png");
+            }
+            let message = agent.attach_image(arg).await?;
+            println!("{message}");
         }
         other => bail!("Unknown command /{other}. Try /help."),
     }

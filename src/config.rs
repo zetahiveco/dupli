@@ -188,6 +188,32 @@ pub fn global_config_path() -> Option<PathBuf> {
     dirs::home_dir().map(|home| home.join(GLOBAL_CONFIG_PATH))
 }
 
+/// Persists the chosen provider to the global config so the first-run
+/// prompt is only shown once. Merges into any existing global config.
+pub fn save_global_provider(provider: Provider) -> Result<()> {
+    let path = global_config_path().context("Cannot determine home directory")?;
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)
+            .with_context(|| format!("Cannot create {}", parent.display()))?;
+    }
+
+    let mut value = std::fs::read_to_string(&path)
+        .ok()
+        .and_then(|text| serde_json::from_str::<Value>(&text).ok())
+        .unwrap_or_else(|| Value::Object(serde_json::Map::new()));
+    if let Value::Object(map) = &mut value {
+        map.insert(
+            "provider".to_owned(),
+            Value::String(provider.id().to_owned()),
+        );
+    }
+
+    let text = serde_json::to_string_pretty(&value)?;
+    std::fs::write(&path, text + "\n")
+        .with_context(|| format!("Cannot write {}", path.display()))?;
+    Ok(())
+}
+
 pub fn project_config_path(root: &Path) -> Option<PathBuf> {
     PROJECT_CONFIG_PATHS
         .iter()

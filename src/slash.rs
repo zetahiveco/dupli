@@ -29,6 +29,7 @@ pub const COMMANDS: &[CommandDef] = &[
     CommandDef { name: "mcp", args: "", desc: "List connected MCP servers and tools" },
     CommandDef { name: "sandbox", args: "[on|off]", desc: "Toggle the Docker sandbox" },
     CommandDef { name: "diagnostics", args: "[path]", desc: "LSP diagnostics for a file" },
+    CommandDef { name: "image", args: "<path|url>", desc: "Attach an image to your next message" },
 ];
 
 pub fn help_text() -> String {
@@ -84,12 +85,32 @@ impl SlashHelper {
         }
     }
 
-    fn arg_candidates(&self, command: &str) -> &[String] {
+    fn arg_candidates(&self, command: &str) -> Vec<String> {
         match command {
-            "provider" => &self.providers,
-            "theme" => &self.themes,
-            "resume" => &self.session_ids,
-            _ => &[],
+            "provider" => self.providers.clone(),
+            "theme" => self.themes.clone(),
+            "resume" => self.session_ids.clone(),
+            // Complete image files in the current directory for /image.
+            "image" => {
+                let mut files = Vec::new();
+                if let Ok(entries) = std::fs::read_dir(".") {
+                    for entry in entries.flatten() {
+                        let name = entry.file_name().to_string_lossy().into_owned();
+                        let lower = name.to_ascii_lowercase();
+                        if lower.ends_with(".png")
+                            || lower.ends_with(".jpg")
+                            || lower.ends_with(".jpeg")
+                            || lower.ends_with(".gif")
+                            || lower.ends_with(".webp")
+                        {
+                            files.push(name);
+                        }
+                    }
+                }
+                files.sort();
+                files
+            }
+            _ => Vec::new(),
         }
     }
 }

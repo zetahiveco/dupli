@@ -4,7 +4,19 @@ Get Dupli running in your project in about two minutes.
 
 ## 1. Install
 
-Requires Rust. Clone and build:
+macOS / Linux:
+
+```sh
+curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"
+```
+
+Or build from source:
 
 ```sh
 git clone https://github.com/zetahiveco/dupli

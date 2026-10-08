@@ -1,8 +1,9 @@
 use crate::config::{Config, Provider};
 use crate::history::FileHistory;
+use crate::images;
 use crate::lsp::LspClient;
 use crate::mcp::{self, McpConnection, McpTool};
-use crate::protocol::{system_prompt, Action, AgentResponse, ChatMessage};
+use crate::protocol::{system_prompt, Action, AgentResponse, ChatMessage, ImageAttachment};
 use crate::report::Reporter;
 use crate::session::Session;
 use crate::skills::{self, Skill};
@@ -24,6 +25,8 @@ pub struct Agent {
     pub mcp: Vec<McpConnection>,
     pub lsp: HashMap<String, LspClient>,
     pub session: Session,
+    /// Images queued with `/image` to send with the next prompt.
+    pub pending_images: Vec<ImageAttachment>,
     /// Non-fatal problems noticed while starting (e.g. an MCP server that
     /// failed to launch).
     pub startup_notes: Vec<String>,
@@ -57,8 +60,24 @@ impl Agent {
             mcp,
             lsp: HashMap::new(),
             session,
+            pending_images: Vec::new(),
             startup_notes,
         })
+    }
+
+    /// Attaches an image (local path or http(s) URL) to the next prompt.
+    pub async fn attach_image(&mut self, source: &str) -> Result<String> {
+        images::remaining(self.pending_images.len())?;
+        let attachment = if images::is_url(source) {
+            images::fetch_url(&self.client, source).await?
+        } else {
+            images::load_path(std::path::Path::new(source))?
+        };
+        self.pending_images.push(attachment);
+        let count = self.pending_images.len();
+        Ok(format!(
+            "Image attached ({count} pending) — it will be sent with your next message."
+        ))
     }
 
     pub fn set_provider(&mut self, provider: Provider) {
@@ -89,9 +108,14 @@ impl Agent {
         if self.session.title.is_empty() {
             self.session.title = short_title(&prompt);
         }
+        let images = std::mem::take(&mut self.pending_images);
+        if !images.is_empty() && self.provider == Provider::Fireworks {
+            reporter.status("Fireworks does not support image input; images were ignored.");
+        }
         self.history.push(ChatMessage {
             role: "user".to_owned(),
             content: prompt,
+            images,
         });
 
         let max_turns = self.config.max_turns;
@@ -116,6 +140,7 @@ impl Agent {
             self.history.push(ChatMessage {
                 role: "assistant".to_owned(),
                 content: raw.clone(),
+                images: Vec::new(),
             });
 
             let response = match serde_json::from_str::<AgentResponse>(&raw) {
@@ -135,6 +160,7 @@ impl Agent {
             self.history.push(ChatMessage {
                 role: "user".to_owned(),
                 content: format!("Action results:\n{}", results.join("\n\n")),
+                images: Vec::new(),
             });
             if turn + 1 == max_turns {
                 reporter.status(&format!(

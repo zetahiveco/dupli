@@ -19,6 +19,9 @@ fn main() -> anyhow::Result<()> {
 
     fs::write(out_dir.join("styles.css"), STYLES)?;
     fs::write(out_dir.join("vercel.json"), r#"{"cleanUrls": true}"#)?;
+    fs::write(out_dir.join("install.sh"), INSTALL_SH)?;
+    // Shell scripts must be executable-friendly; Vercel serves them as-is.
+    fs::write(out_dir.join("install.ps1"), INSTALL_PS1)?;
 
     // Marketing landing page.
     write_page(&out_dir, "index.html", &landing());
@@ -38,6 +41,7 @@ fn main() -> anyhow::Result<()> {
         ("docs/themes", "Themes", fs::read_to_string(content_root.join("themes.md"))?),
         ("docs/web", "Web UI", fs::read_to_string(content_root.join("web.md"))?),
         ("docs/lsp", "LSP & Diagnostics", fs::read_to_string(content_root.join("lsp.md"))?),
+        ("docs/images", "Images", fs::read_to_string(content_root.join("images.md"))?),
     ];
 
     for (route, title, markdown) in docs {
@@ -112,10 +116,26 @@ fn landing() -> String {
   <p class="kicker">a minimal coding agent, written in rust</p>
   <h1>There are many agent harnesses.<br>But this one is <em>yours</em>.</h1>
   <p class="lede">Dupli runs in your project folder, streams from your own API keys, and stays out of your way. No sub-agent ceremony. No permission theater. Just a fast Rust core you can read in an afternoon and bend to your workflow.</p>
-  <div class="install">
-    <code>cargo install --path .</code>
-    <span class="hint">…or clone and <code>cargo run</code> right now</span>
+  <div class="install-box">
+    <div class="tabs">
+      <button class="tab active" data-panel="tab-curl">curl</button>
+      <button class="tab" data-panel="tab-powershell">PowerShell</button>
+      <button class="tab" data-panel="tab-cargo">cargo</button>
+    </div>
+    <div class="tab-panel active" id="tab-curl"><code>curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh</code></div>
+    <div class="tab-panel" id="tab-powershell"><code>powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"</code></div>
+    <div class="tab-panel" id="tab-cargo"><code>cargo install --locked --git https://github.com/zetahiveco/dupli dupli</code></div>
   </div>
+  <script>
+    document.querySelectorAll('.tab').forEach(function (button) {{
+      button.addEventListener('click', function () {{
+        document.querySelectorAll('.tab').forEach(function (b) {{ b.classList.remove('active'); }});
+        document.querySelectorAll('.tab-panel').forEach(function (p) {{ p.classList.remove('active'); }});
+        button.classList.add('active');
+        document.getElementById(button.dataset.panel).classList.add('active');
+      }});
+    }});
+  </script>
   <div class="cta-row">
     <a class="btn primary" href="/docs/getting-started">Get started</a>
     <a class="btn" href="/docs/">Read the docs</a>
@@ -156,6 +176,7 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
         ("/docs/themes", "Themes"),
         ("/docs/web", "Web UI"),
         ("/docs/lsp", "LSP & Diagnostics"),
+        ("/docs/images", "Images"),
     ];
     let nav = links
         .iter()
@@ -187,71 +208,6 @@ fn docs_layout(active: &str, title: &str, content: &str) -> String {
     )
 }
 
-const STYLES: &str = r#"
-:root {
-  --bg: #0c0d11; --panel: #14161d; --border: #232733;
-  --text: #e6e8f0; --muted: #9096a8; --accent: #8f6bff; --accent2: #b39bff;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text);
-  font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
-  font-size: 15px; line-height: 1.6; }
-a { color: var(--accent2); }
-code { background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
-  padding: 1px 6px; font-size: 0.92em; }
-pre { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-  padding: 16px; overflow-x: auto; }
-pre code { border: 0; padding: 0; }
-h1, h2, h3 { line-height: 1.25; }
-
-.site-header { display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 28px; border-bottom: 1px solid var(--border); }
-.logo { color: var(--accent2); font-weight: 700; font-size: 20px; text-decoration: none; }
-.logo .cursor { color: var(--accent); animation: blink 1.2s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.site-header nav a { margin-left: 20px; text-decoration: none; color: var(--muted); }
-.site-header nav a:hover { color: var(--text); }
-
-.hero { max-width: 820px; margin: 0 auto; padding: 72px 28px 40px; text-align: center; }
-.kicker { color: var(--accent); text-transform: uppercase; letter-spacing: 3px; font-size: 12px; }
-.hero h1 { font-size: clamp(30px, 6vw, 52px); margin: 14px 0; }
-.hero em { color: var(--accent2); font-style: normal; }
-.lede { color: var(--muted); font-size: 17px; }
-.install { display: inline-flex; gap: 14px; align-items: center; background: var(--panel);
-  border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin: 22px 0; }
-.install code { border: 0; background: none; color: var(--accent2); }
-.hint { color: var(--muted); font-size: 12px; }
-.cta-row { display: flex; gap: 12px; justify-content: center; }
-.btn { border: 1px solid var(--border); border-radius: 8px; padding: 10px 22px;
-  text-decoration: none; color: var(--text); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.btn.primary:hover { background: var(--accent2); }
-
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px; max-width: 1100px; margin: 30px auto; padding: 0 28px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
-  padding: 20px; }
-.card h3 { margin-top: 0; color: var(--accent2); }
-.card p { color: var(--muted); margin-bottom: 0; }
-
-.term { max-width: 820px; margin: 30px auto 60px; padding: 0 28px; }
-.p { color: var(--accent2); } .d { color: var(--muted); }
-
-.docs { display: grid; grid-template-columns: 230px 1fr; max-width: 1100px;
-  margin: 0 auto; padding: 32px 28px; gap: 36px; }
-.docs-nav { border-right: 1px solid var(--border); padding-right: 18px; }
-.docs-nav a { display: block; padding: 5px 8px; text-decoration: none; color: var(--muted);
-  border-radius: 6px; }
-.docs-nav a:hover { color: var(--text); }
-.docs-nav a.active { color: var(--accent2); background: var(--panel); }
-.docs-body { max-width: 720px; }
-.docs-body h1 { border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-.docs-body table { border-collapse: collapse; width: 100%; }
-.docs-body th, .docs-body td { border: 1px solid var(--border); padding: 6px 10px;
-  text-align: left; }
-.docs-body blockquote { border-left: 3px solid var(--accent); margin: 0; padding-left: 16px;
-  color: var(--muted); }
-
-.site-footer { text-align: center; color: var(--muted); padding: 30px;
-  border-top: 1px solid var(--border); font-size: 13px; }
-"#;
+const STYLES: &str = include_str!("../assets/styles.css");
+const INSTALL_SH: &str = include_str!("../assets/install.sh");
+const INSTALL_PS1: &str = include_str!("../assets/install.ps1");

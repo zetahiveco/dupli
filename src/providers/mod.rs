@@ -1,13 +1,78 @@
 mod stream;
 
 use crate::config::Provider;
-use crate::report::Reporter;
 use crate::protocol::{system_prompt, ChatMessage};
+use crate::report::Reporter;
 use anyhow::{bail, Context, Result};
 use reqwest::{Client, Response};
 use serde_json::json;
 use std::path::Path;
 use stream::{stream_events, StreamedResponse};
+
+/// OpenAI-style message list. `allow_images` is false for Fireworks,
+/// which does not accept vision content.
+fn openai_messages(system: &str, history: &[ChatMessage], allow_images: bool) -> Vec<serde_json::Value> {
+    let mut messages = vec![json!({"role": "system", "content": system})];
+    for item in history {
+        if allow_images && !item.images.is_empty() {
+            let mut parts = vec![json!({"type": "text", "text": item.content})];
+            for image in &item.images {
+                parts.push(json!({
+                    "type": "image_url",
+                    "image_url": {"url": format!("data:{};base64,{}", image.media_type, image.data)}
+                }));
+            }
+            messages.push(json!({"role": item.role, "content": parts}));
+        } else {
+            messages.push(json!({"role": item.role, "content": item.content}));
+        }
+    }
+    messages
+}
+
+/// Anthropic-style message list with base64 image blocks.
+fn anthropic_messages(history: &[ChatMessage]) -> Vec<serde_json::Value> {
+    history
+        .iter()
+        .map(|item| {
+            if item.images.is_empty() {
+                json!({"role": item.role, "content": item.content})
+            } else {
+                let mut parts = vec![json!({"type": "text", "text": item.content})];
+                for image in &item.images {
+                    parts.push(json!({
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": image.media_type,
+                            "data": image.data
+                        }
+                    }));
+                }
+                json!({"role": item.role, "content": parts})
+            }
+        })
+        .collect()
+}
+
+/// Gemini-style contents list with inline_data parts.
+fn gemini_contents(history: &[ChatMessage]) -> Vec<serde_json::Value> {
+    history
+        .iter()
+        .map(|item| {
+            let mut parts = vec![json!({"text": item.content})];
+            for image in &item.images {
+                parts.push(json!({
+                    "inline_data": {"mime_type": image.media_type, "data": image.data}
+                }));
+            }
+            json!({
+                "role": if item.role == "assistant" { "model" } else { "user" },
+                "parts": parts
+            })
+        })
+        .collect()
+}
 
 pub async fn complete<'a, R: Reporter>(
     client: &Client,
@@ -30,12 +95,8 @@ pub async fn complete<'a, R: Reporter>(
             } else {
                 "https://api.openai.com/v1/chat/completions"
             };
-            let mut messages = vec![json!({"role": "system", "content": system})];
-            messages.extend(
-                history
-                    .iter()
-                    .map(|item| json!({"role": item.role, "content": item.content})),
-            );
+            let allow_images = matches!(provider, Provider::OpenAi);
+            let messages = openai_messages(&system, history, allow_images);
             let mut request_body = json!({
                 "model": model,
                 "messages": messages,
@@ -63,7 +124,7 @@ pub async fn complete<'a, R: Reporter>(
                     "model": model,
                     "max_tokens": 4096,
                     "system": system,
-                    "messages": history,
+                    "messages": anthropic_messages(history),
                     "stream": true
                 }))
                 .send()
@@ -72,15 +133,6 @@ pub async fn complete<'a, R: Reporter>(
             check_stream_response(response).await?
         }
         Provider::Gemini => {
-            let contents = history
-                .iter()
-                .map(|item| {
-                    json!({
-                        "role": if item.role == "assistant" { "model" } else { "user" },
-                        "parts": [{"text": item.content}]
-                    })
-                })
-                .collect::<Vec<_>>();
             let url = format!(
                 "https://generativelanguage.googleapis.com/v1beta/models/{}:streamGenerateContent",
                 model
@@ -91,7 +143,7 @@ pub async fn complete<'a, R: Reporter>(
                 .header("x-goog-api-key", &api_key)
                 .json(&json!({
                     "systemInstruction": {"parts": [{"text": system}]},
-                    "contents": contents,
+                    "contents": gemini_contents(history),
                     "generationConfig": {"temperature": 0.2}
                 }))
                 .send()

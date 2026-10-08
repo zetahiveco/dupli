@@ -35,6 +35,8 @@ conveniences of [OpenCode](https://opencode.ai).
   your playbook on demand (progressive disclosure, no prompt bloat).
 - **Own LSP client** — point `lspServers` at rust-analyzer or friends and
   get real diagnostics into your session (`/diagnostics`).
+- **Images** — attach local screenshots or image URLs with `/image` and the
+  model sees them (Anthropic, OpenAI, Gemini).
 - **Undo / redo / diff** — every file write is recorded: `/undo`, `/redo`,
   and `/diff` show a unified diff against the session's starting state.
 - **Slash commands with autocomplete** — `/provider`, `/exit`, `/navigate`,
@@ -58,9 +60,14 @@ conveniences of [OpenCode](https://opencode.ai).
 Requires Rust. 
 
 ```sh
-git clone https://github.com/zetahiveco/dupli
-cd dupli
-cargo install --path .
+# macOS / Linux
+curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"
+
+# or with cargo
+cargo install --locked --git https://github.com/zetahiveco/dupli dupli
 
 export ANTHROPIC_API_KEY="sk-..."
 cd your-project
@@ -106,6 +113,7 @@ Type `/` and press **Tab** to autocomplete.
 | `/mcp` | | List MCP servers and tools |
 | `/sandbox` | `[on\|off]` | Toggle the Docker sandbox |
 | `/diagnostics` | `[path]` | LSP diagnostics for a file |
+| `/image` | `<path\|url>` | Attach an image to your next message |
 
 ## Configuration
 
