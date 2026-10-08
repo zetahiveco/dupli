@@ -3,3 +3,4 @@
 .vercel
 site/dist/
 .DS_Store
+.env*
