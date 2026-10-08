@@ -1,5 +1,5 @@
 # Dupli installer — https://github.com/zetahiveco/dupli
-# Usage:  powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"
+# Usage:  powershell -c "irm https://dupli.dev/install.ps1 | iex"
 $ErrorActionPreference = "Stop"
 
 $repo = "zetahiveco/dupli"

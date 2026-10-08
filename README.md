@@ -61,10 +61,10 @@ Requires Rust.
 
 ```sh
 # macOS / Linux
-curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh
+curl -fsSL https://dupli.dev/install.sh | sh
 
 # Windows (PowerShell)
-powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"
+powershell -c "irm https://dupli.dev/install.ps1 | iex"
 
 # or with cargo
 cargo install --locked --git https://github.com/zetahiveco/dupli dupli

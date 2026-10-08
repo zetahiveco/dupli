@@ -1,6 +1,6 @@
 #!/bin/sh
 # Dupli installer — https://github.com/zetahiveco/dupli
-# Usage:  curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh
+# Usage:  curl -fsSL https://dupli.dev/install.sh | sh
 set -e
 
 REPO="zetahiveco/dupli"

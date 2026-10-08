@@ -122,8 +122,8 @@ fn landing() -> String {
       <button class="tab" data-panel="tab-powershell">PowerShell</button>
       <button class="tab" data-panel="tab-cargo">cargo</button>
     </div>
-    <div class="tab-panel active" id="tab-curl"><code>curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh</code></div>
-    <div class="tab-panel" id="tab-powershell"><code>powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"</code></div>
+    <div class="tab-panel active" id="tab-curl"><code>curl -fsSL https://dupli.dev/install.sh | sh</code></div>
+    <div class="tab-panel" id="tab-powershell"><code>powershell -c "irm https://dupli.dev/install.ps1 | iex"</code></div>
     <div class="tab-panel" id="tab-cargo"><code>cargo install --locked --git https://github.com/zetahiveco/dupli dupli</code></div>
   </div>
   <script>

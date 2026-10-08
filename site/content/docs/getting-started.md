@@ -7,13 +7,13 @@ Get Dupli running in your project in about two minutes.
 macOS / Linux:
 
 ```sh
-curl -fsSL https://dupli-zetahive.vercel.app/install.sh | sh
+curl -fsSL https://dupli.dev/install.sh | sh
 ```
 
 Windows (PowerShell):
 
 ```powershell
-powershell -c "irm https://dupli-zetahive.vercel.app/install.ps1 | iex"
+powershell -c "irm https://dupli.dev/install.ps1 | iex"
 ```
 
 Or build from source:
